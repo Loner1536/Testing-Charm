@@ -8,7 +8,7 @@
 		"blink": "blink ./src/remotes/.blink -y",
 		"compile": "rbxtsc -p tsconfig.json -i dist/include",
 		"build": "concurrently \"npm run compile\" \"rojo build -o ./build.rbxlx\"",
-		"dev": "concurrently \"npm run blink\" \"npm run compile -- -w\" \"rojo serve\""
+		"dev": "concurrently \"npm run blink\"  \"rojo serve\" \"npm run compile -- -w\""
 	},
 	"license": "ISC",
 	"keywords": [],
