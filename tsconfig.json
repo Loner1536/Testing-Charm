@@ -30,9 +30,6 @@
 			}
 		],
 		"paths": {
-			"@network/*": [
-				"remotes/network/*"
-			],
 			"@shared/*": [
 				"shared/*"
 			],
@@ -41,7 +38,13 @@
 			],
 			"@server/*": [
 				"server/*"
-			]
+			],
+			"@assets/*": [
+				"../assets/*"
+			],
+			"@network/*": [
+				"remotes/network/*"
+			],
 		}
 	}
 }

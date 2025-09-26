@@ -1,5 +1,5 @@
 {
-	"name": "roblox-ts-charm-example",
+	"name": "test-tcs",
 	"emitLegacyScripts": false,
 	"globIgnorePaths": [
 		"**/package.json",
@@ -34,7 +34,10 @@
 				"$path": "dist/out/remotes/network"
 			},
 			"shared": {
-				"$path": "dist/out/shared"
+				"$path": "dist/out/shared",
+				"assets": {
+					"$path": "assets/shared"
+				}
 			},
 			"client": {
 				"$path": "dist/out/client",
@@ -65,6 +68,9 @@
 			"$className": "ServerStorage",
 			"stories": {
 				"$path": "dist/out/stories"
+			},
+			"assets": {
+				"$path": "assets/server"
 			}
 		}
 	}
