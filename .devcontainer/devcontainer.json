@@ -1,0 +1,111 @@
+{
+    "name": "Tower Defense",
+    // Use the main Dockerfile
+    "build": {
+        "dockerfile": "./Dockerfile",
+        "context": ".."
+    },
+    // Override the entrypoint to avoid conflicts with volume mounts
+    "shutdownAction": "stopContainer",
+    "workspaceFolder": "/workspace",
+    // Mount the source code
+    // "mounts": [
+    //     "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached"
+    // ],
+    // Use 'forwardPorts' to make a list of ports inside the container available locally.
+    "forwardPorts": [
+        34872
+    ],
+    "postStartCommand": "bash ./scripts/shell/postStart.sh",
+    // Configure container user
+    "remoteUser": "node",
+    // Ensure proper container environment
+    "containerEnv": {
+        "NODE_ENV": "development"
+    },
+    // Set *default* container specific settings.json values on container create.
+    "customizations": {
+        "vscode": {
+            "settings": {
+                // Editor configuration
+                "editor.defaultFormatter": "esbenp.prettier-vscode",
+                "editor.inlayHints.enabled": "on",
+                "editor.formatOnSaveMode": "file",
+                "editor.inlayHints.fontSize": 12,
+                "editor.formatOnSave": true,
+                // File configuration
+                "files.eol": "\n",
+                // JavaScript
+                "javascript.format.semicolons": "insert",
+                // Jest configuration
+                "jest.jestCommandLine": "npm run test:jest --",
+                "jest.runMode": "on-demand",
+                // Yaml configuration
+                "yaml.schemas": {
+                    "https://mantledeploy.vercel.app/schemas/v0.11.15/schema.json": "mantle.yml"
+                },
+                // Luau Language Server configuration
+                "luau-lsp.ignoreGlobs": [
+                    "**/node_modules/**",
+                    "**/old_common/**",
+                    "**/include/**",
+                    "**/scripts/**",
+                    "**/network/**",
+                    "**/_Index/**",
+                    "**/dist/**",
+                    "**/out/**"
+                ],
+                // Python configuration
+                "search.exclude": {
+                    "node_modules": true,
+                    "old_common": true,
+                    "include": true,
+                    "dist": true,
+                    "out": true
+                },
+                // Terminal configuration
+                "terminal.integrated.fontFamily": "'Monaspace Radon Frozen', 'FiraCode Nerd Font'",
+                "terminal.integrated.defaultProfile.windows": "Git Bash",
+                // TypeScript configuration
+                "typescript.tsdk": "node_modules/typescript/lib",
+                "typescript.format.semicolons": "insert",
+                // Language-specific overrides
+                "[shellscript]": {
+                    "editor.defaultFormatter": "mkhl.shfmt"
+                },
+                "[json]": {
+                    "editor.defaultFormatter": "vscode.json-language-features"
+                }
+            },
+            "extensions": [
+                "neotan.vscode-auto-restart-typescript-eslint-servers",
+                "VisualStudioExptTeam.intellicode-api-usage-examples",
+                "VisualStudioExptTeam.vscodeintellicode-completions",
+                "VisualStudioExptTeam.vscodeintellicode",
+                "christian-kohler.npm-intellisense",
+                "DavidAnson.vscode-markdownlint",
+                "github.vscode-github-actions",
+                "checkraisefold.blink-vscode",
+                "roblox-ts.vscode-roblox-ts",
+                "foxundermoon.shell-format",
+                "kampfkarren.selene-vscode",
+                "tamasfe.even-better-toml",
+                "donjayamanne.githistory",
+                "shakram02.bash-beautify",
+                "dbaeumer.vscode-eslint",
+                "esbenp.prettier-vscode",
+                "johnnymorganz.luau-lsp",
+                "ms-vscode.live-server",
+                "Gruntfuggly.todo-tree",
+                "JohnnyMorganz.stylua",
+                "johnnymorganz.stylua",
+                "redhat.vscode-yaml",
+                "filiptibell.deputy",
+                "Orta.vscode-jest",
+                "eamodio.gitlens",
+                "dphfox.cuddle",
+                "mkhl.shfmt"
+            ]
+        }
+    }
+}

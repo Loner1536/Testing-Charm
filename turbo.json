@@ -1,0 +1,17 @@
+{
+    "tasks": {
+        "build": {
+            "outputs": [
+                "dist/out/**",
+                "node_modules/**",
+                "dist/include/**"
+            ]
+        },
+        "watch": {
+            "cache": false,
+            "dependsOn": [
+                "build"
+            ]
+        }
+    }
+}

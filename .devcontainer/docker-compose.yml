@@ -1,0 +1,81 @@
+version: "3.9"
+
+x-common-build: &common-build
+    context: ..
+    dockerfile: .devcontainer/Dockerfile
+
+services:
+    roblox-ts-dev:
+        build: *common-build
+        platform: linux/amd64
+        container_name: roblox-ts-dev
+        volumes:
+            - ..:/workspace:cached
+            - node_modules_volume:/workspace/node_modules
+            # Persist rokit tools
+            - rokit_cache:/home/node/.rokit
+            # Persist Oh-My-Zsh and shell configuration
+            - zsh_cache:/home/node/.oh-my-zsh
+        working_dir: /workspace
+        ports:
+            - "3000:3000"
+        environment:
+            - NODE_ENV=development
+            - FORCE_COLOR=1
+        stdin_open: true
+        tty: true
+        command: zsh
+        networks:
+            - roblox-dev
+
+    roblox-ts-test:
+        build: *common-build
+        platform: linux/amd64
+        volumes:
+            - ..:/workspace:cached
+            - node_modules_volume:/workspace/node_modules
+            - rokit_cache:/home/node/.rokit
+        working_dir: /workspace
+        environment:
+            - NODE_ENV=test
+            - CI=true
+            - ROBLOX_PLACE_ID=${ROBLOX_PLACE_ID}
+            - ROBLOX_API_KEY=${ROBLOX_API_KEY}
+            - ROBLOX_UNIVERSE_ID=${ROBLOX_UNIVERSE_ID}
+        command: npm run test
+        networks:
+            - roblox-dev
+
+    roblox-ts-build:
+        build: *common-build
+        platform: linux/amd64
+        volumes:
+            - ..:/workspace:cached
+            - node_modules_volume:/workspace/node_modules
+            - rokit_cache:/home/node/.rokit
+        working_dir: /workspace
+        environment:
+            - NODE_ENV=production
+        command: npm run build
+        networks:
+            - roblox-dev
+
+    roblox-ts-lint:
+        build: *common-build
+        platform: linux/amd64
+        volumes:
+            - ..:/workspace:cached
+            - node_modules_volume:/workspace/node_modules
+        working_dir: /workspace
+        command: npx eslint src/ --ext .ts
+        networks:
+            - roblox-dev
+
+volumes:
+    node_modules_volume:
+    rokit_cache:
+    zsh_cache:
+
+networks:
+    roblox-dev:
+        driver: bridge

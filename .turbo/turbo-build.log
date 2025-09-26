@@ -1,0 +1,109 @@
+
+
+> testing-ecs@1.0.0 build
+> rbxtsc
+
+[1G[0K[[90mFlamework[39m]: [33mTypeScript version differs[39m
+[[90mFlamework[39m]: [33mFlamework: v5.8.3, roblox-ts: v5.5.3[39m
+[[90mFlamework[39m]: [33mFlamework will switch to v5.5.3, but you can get rid of this warning by running: npm i -D typescript@5.5.3[39m
+[96msrc/client/controllers/dataStore.ts[0m:[93m3[0m:[93m27[0m - [91merror[0m[90m TS2307: [0mCannot find module '@network/client' or its corresponding type declarations.
+
+[7m3[0m import ClientNetwork from "@network/client";
+[7m [0m [91m                          ~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/client/controllers/dataStore.ts[0m:[93m16[0m:[93m32[0m - [91merror[0m[90m TS7006: [0mParameter 'payload' implicitly has an 'any' type.
+
+[7m16[0m   ClientNetwork.Atoms.sync.on((payload) => {
+[7m  [0m [91m                               ~~~~~~~[0m
+
+[96msrc/server/services/dataStore/index.ts[0m:[93m7[0m:[93m21[0m - [91merror[0m[90m TS2307: [0mCannot find module '@network/server' or its corresponding type declarations.
+
+[7m7[0m import Network from "@network/server";
+[7m [0m [91m                    ~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/server/services/dataStore/index.ts[0m:[93m155[0m:[93m29[0m - [91merror[0m[90m TS7006: [0mParameter 'player' implicitly has an 'any' type.
+
+[7m155[0m    Network.Atoms.update.on((player, payload) => {
+[7m   [0m [91m                            ~~~~~~[0m
+
+[96msrc/server/services/dataStore/index.ts[0m:[93m155[0m:[93m37[0m - [91merror[0m[90m TS7006: [0mParameter 'payload' implicitly has an 'any' type.
+
+[7m155[0m    Network.Atoms.update.on((player, payload) => {
+[7m   [0m [91m                                    ~~~~~~~[0m
+
+[96msrc/server/services/dataStore/index.ts[0m:[93m157[0m:[93m6[0m - [91merror[0m[90m TS7053: [0mElement implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ money: { click: (player: Player, store: PlayerStore<ServerNetwork.DataStore.Player.Default>, actionData: any) => any; }; }'.
+
+[7m157[0m      filters[payload.type][payload.action.type](player, this.store, payload.action as never),
+[7m   [0m [91m     ~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/shared/atoms/utility/filter-payload.ts[0m:[93m2[0m:[93m27[0m - [91merror[0m[90m TS2307: [0mCannot find module '@network/server' or its corresponding type declarations.
+
+[7m2[0m import ServerNetwork from "@network/server";
+[7m [0m [91m                          ~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/stories/setup/index.ts[0m:[93m3[0m:[93m21[0m - [91merror[0m[90m TS2307: [0mCannot find module '@network/server' or its corresponding type declarations.
+
+[7m3[0m import Network from "@network/server";
+[7m [0m [91m                    ~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/stories/setup/index.ts[0m:[93m82[0m:[93m6[0m - [91merror[0m[90m TS7053: [0mElement implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ money: { click: (player: Player, store: PlayerStore<ServerNetwork.DataStore.Player.Default>, actionData: any) => any; }; }'.
+
+[7m82[0m      filters[payload.type][payload.action.type](mockedPlayer, mockedStore, payload.action as any);
+[7m  [0m [91m     ~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/shared/types/interface/index.ts[0m:[93m5[0m:[93m31[0m - [91merror[0m[90m TS2307: [0mCannot find module '@network/client' or its corresponding type declarations.
+
+[7m5[0m export type * as Network from "@network/client";
+[7m [0m [91m                              ~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/shared/types/interface/index.ts[0m:[93m6[0m:[93m26[0m - [91merror[0m[90m TS2307: [0mCannot find module '@network/client' or its corresponding type declarations.
+
+[7m6[0m import type Network from "@network/client";
+[7m [0m [91m                         ~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/shared/types/index.ts[0m:[93m3[0m:[93m31[0m - [91merror[0m[90m TS2307: [0mCannot find module '@network/client' or its corresponding type declarations.
+
+[7m3[0m export type * as Network from "@network/client";
+[7m [0m [91m                              ~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/shared/atoms/dataStore.ts[0m:[93m2[0m:[93m27[0m - [91merror[0m[90m TS2307: [0mCannot find module '@network/server' or its corresponding type declarations.
+
+[7m2[0m import ServerNetwork from "@network/server";
+[7m [0m [91m                          ~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/server/services/dataStore/filters/money/click/types/one.ts[0m:[93m4[0m:[93m28[0m - [91merror[0m[90m TS2307: [0mCannot find module '@network/server' or its corresponding type declarations.
+
+[7m4[0m import type { Atoms } from "@network/server";
+[7m [0m [91m                           ~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/server/services/dataStore/filters/money/click/index.ts[0m:[93m4[0m:[93m28[0m - [91merror[0m[90m TS2307: [0mCannot find module '@network/server' or its corresponding type declarations.
+
+[7m4[0m import type { Atoms } from "@network/server";
+[7m [0m [91m                           ~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/server/services/dataStore/filters/money/click/index.ts[0m:[93m14[0m:[93m2[0m - [91merror[0m[90m TS7053: [0mElement implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ one: (player: Player, store: PlayerStore<ServerNetwork.DataStore.Player.Default>, transformFunction: (data: ServerNetwork.DataStore.Player.Default) => void) => void; ten: (player: Player, store: PlayerStore<ServerNetwork.DataStore.Player.Default>, transformFunction: (data: ServerNetwork.DataStore.Player.Default) =...'.
+
+[7m14[0m  types[actionData.value](player, store, (data) => {
+[7m  [0m [91m ~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/server/services/dataStore/filters/money/click/index.ts[0m:[93m14[0m:[93m42[0m - [91merror[0m[90m TS7006: [0mParameter 'data' implicitly has an 'any' type.
+
+[7m14[0m  types[actionData.value](player, store, (data) => {
+[7m  [0m [91m                                         ~~~~[0m
+
+[96msrc/server/services/dataStore/filters/money/click/types/ten.ts[0m:[93m4[0m:[93m28[0m - [91merror[0m[90m TS2307: [0mCannot find module '@network/server' or its corresponding type declarations.
+
+[7m4[0m import type { Atoms } from "@network/server";
+[7m [0m [91m                           ~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/client/controllers/interface/props/bottomMenu/index.ts[0m:[93m6[0m:[93m21[0m - [91merror[0m[90m TS2307: [0mCannot find module '@network/client' or its corresponding type declarations.
+
+[7m6[0m import Network from "@network/client";
+[7m [0m [91m                    ~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/client/controllers/interface/props/network/index.ts[0m:[93m3[0m:[93m21[0m - [91merror[0m[90m TS2307: [0mCannot find module '@network/client' or its corresponding type declarations.
+
+[7m3[0m import Network from "@network/client";
+[7m [0m [91m                    ~~~~~~~~~~~~~~~~~[0m
+
+[1G[0K⠙[1G[0K

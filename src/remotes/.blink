@@ -1,0 +1,11 @@
+option TypesOutput = "network/types.luau"
+option ServerOutput = "network/server.ts"
+option ClientOutput = "network/client.ts"
+
+option PromiseLibrary = "ReplicatedStorage.rbxts_include.Promise"
+
+option UsePolling = false
+option Typescript = true
+option Casing = Camel
+
+import "./dataStore.blink" as DataStore

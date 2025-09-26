@@ -1,0 +1,52 @@
+option TypesOutput = "network/types.luau"
+option ServerOutput = "network/server.ts"
+option ClientOutput = "network/client.ts"
+
+option PromiseLibrary = "ReplicatedStorage.rbxts_include.Promise"
+
+option UsePolling = false
+option Typescript = true
+option Casing = Camel
+
+
+scope Player {
+    scope Unit {
+        struct Default {
+            id: string
+        }
+    }
+
+    struct Default {
+        units: Unit.Default[]
+    }
+}
+
+scope Atoms {
+    map PlayerMap = { [string]: Player.Default}
+
+    enum PayloadSync = "type" {
+        init {
+            data: struct {
+                players: PlayerMap
+            }
+        },
+        patch {
+            data: struct {
+                players: PlayerMap
+            }
+        }
+    }
+
+    event sync {
+        From: Server,
+        Type: Reliable,
+        Call: SingleSync,
+        Data: PayloadSync
+    }
+
+    event init {
+        From: Client,
+        Type: Reliable,
+        Call: SingleSync,
+    }
+}

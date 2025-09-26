@@ -1,0 +1,59 @@
+
+
+> testing-ecs@1.0.0 dev
+> concurrently "npm run blink" "npm run watch" "npm run rojo"
+
+[1G[0K[0m[1][0m 
+[0m[1][0m > testing-ecs@1.0.0 watch
+[0m[1][0m > rbxtsc -w
+[0m[1][0m 
+[0m[0][0m 
+[0m[0][0m > testing-ecs@1.0.0 blink
+[0m[0][0m > blink ./src/remotes/.blink -y
+[0m[0][0m 
+[0m[2][0m 
+[0m[2][0m > testing-ecs@1.0.0 rojo
+[0m[2][0m > rojo serve -- -p ./default.project.json --watch
+[0m[2][0m 
+[0m[2][0m error: Found argument './default.project.json' which wasn't expected, or isn't valid in this context
+[0m[2][0m 
+[0m[2][0m USAGE:
+[0m[2][0m     rojo serve [OPTIONS] [PROJECT]
+[0m[2][0m 
+[0m[2][0m For more information try --help
+[0m[2][0m [0mnpm run rojo exited with code 2[0m
+[0m[0][0m [32mBlink[0m 0.18.1
+[0m[0][0m [36mReading source from ./src/remotes/.blink...
+[0m[0][0m [0m[34mParsing source into AST...
+[0m[0][0m [0m[34mGenerating output files...
+[0m[0][0m [0m[32mNetwork files generated!
+[0m[0][0m [0m
+[0m[0][0m [0mnpm run blink exited with code 0[0m
+[0m[1][0m [[90m4:28:15 AM[0m] Starting compilation in watch mode...
+[0m[1][0m 
+[0m[1][0m [[90m4:28:16 AM[0m] Found 0 errors. Watching for file changes.
+[0m[1][0m 
+[0m[1][0m [[90m4:28:24 AM[0m] File change detected. Starting incremental compilation...
+[0m[1][0m 
+[0m[1][0m [[90m4:28:24 AM[0m] Found 0 errors. Watching for file changes.
+[0m[1][0m 
+node:events:502
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: spawn ps ENOENT
+[90m    at ChildProcess._handle.onexit (node:internal/child_process:285:19)[39m
+[90m    at onErrorNT (node:internal/child_process:483:16)[39m
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)[39m
+Emitted 'error' event on ChildProcess instance at:
+[90m    at ChildProcess._handle.onexit (node:internal/child_process:291:12)[39m
+[90m    at onErrorNT (node:internal/child_process:483:16)[39m
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)[39m {
+  errno: [33m-2[39m,
+  code: [32m'ENOENT'[39m,
+  syscall: [32m'spawn ps'[39m,
+  path: [32m'ps'[39m,
+  spawnargs: [ [32m'-o'[39m, [32m'pid'[39m, [32m'--no-headers'[39m, [32m'--ppid'[39m, [33m20753[39m ]
+}
+
+Node.js v20.19.5

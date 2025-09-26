@@ -1,0 +1,47 @@
+{
+	"compilerOptions": {
+		"typeRoots": [
+			"node_modules/@rbxts",
+			"node_modules/@flamework"
+		],
+		"tsBuildInfoFile": "dist/out/tsconfig.tsbuildinfo",
+		"forceConsistentCasingInFileNames": true,
+		"jsxFragmentFactory": "Vide.Fragment",
+		"allowSyntheticDefaultImports": true,
+		"experimentalDecorators": true,
+		"moduleDetection": "force",
+		"moduleResolution": "Node",
+		"downlevelIteration": true,
+		"resolveJsonModule": true,
+		"jsxFactory": "Vide.jsx",
+		"module": "commonjs",
+		"incremental": true,
+		"target": "ESNext",
+		"baseUrl": "src",
+		"rootDir": "src",
+		"outDir": "dist/out",
+		"jsx": "react",
+		"strict": true,
+		"noLib": true,
+		"plugins": [
+			{
+				"transform": "rbxts-transformer-flamework",
+				"obfuscation": false
+			}
+		],
+		"paths": {
+			"@network/*": [
+				"remotes/network/*"
+			],
+			"@shared/*": [
+				"shared/*"
+			],
+			"@client/*": [
+				"client/*"
+			],
+			"@server/*": [
+				"server/*"
+			]
+		}
+	}
+}

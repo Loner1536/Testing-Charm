@@ -1,0 +1,71 @@
+{
+	"name": "roblox-ts-charm-example",
+	"emitLegacyScripts": false,
+	"globIgnorePaths": [
+		"**/package.json",
+		"**/tsconfig.json"
+	],
+	"tree": {
+		"$className": "DataModel",
+		"ServerScriptService": {
+			"$className": "ServerScriptService",
+			"server": {
+				"$path": "dist/out/server",
+				"$properties": {
+					"RunContext": "Server"
+				}
+			}
+		},
+		"ReplicatedStorage": {
+			"$className": "ReplicatedStorage",
+			"rbxts_include": {
+				"$path": "dist/include",
+				"node_modules": {
+					"$className": "Folder",
+					"@rbxts": {
+						"$path": "node_modules/@rbxts"
+					},
+					"@flamework": {
+						"$path": "node_modules/@flamework"
+					}
+				}
+			},
+			"network": {
+				"$path": "dist/out/remotes/network"
+			},
+			"shared": {
+				"$path": "dist/out/shared"
+			},
+			"client": {
+				"$path": "dist/out/client",
+				"$properties": {
+					"RunContext": "Client"
+				}
+			}
+		},
+		"Workspace": {
+			"$className": "Workspace",
+			"$properties": {
+				"FilteringEnabled": true
+			}
+		},
+		"HttpService": {
+			"$className": "HttpService",
+			"$properties": {
+				"HttpEnabled": true
+			}
+		},
+		"SoundService": {
+			"$className": "SoundService",
+			"$properties": {
+				"RespectFilteringEnabled": true
+			}
+		},
+		"ServerStorage": {
+			"$className": "ServerStorage",
+			"stories": {
+				"$path": "dist/out/stories"
+			}
+		}
+	}
+}
