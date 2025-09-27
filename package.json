@@ -5,10 +5,11 @@
 	"main": "index.js",
 	"description": "",
 	"scripts": {
-		"blink": "blink ./src/remotes/.blink -y",
+		"blink-compile": "blink ./src/remotes/.blink -y",
+		"blink-watch": "blink ./src/remotes/.blink -w -y",
 		"compile": "rbxtsc -p tsconfig.json -i dist/include",
 		"build": "concurrently \"npm run compile\" \"rojo build -o ./build.rbxlx\"",
-		"dev": "concurrently \"npm run blink\" \"npm run compile -- -w\" \"rojo serve\""
+		"dev": "concurrently \"npm run blink-compile\" \"npm run blink-watch\" \"npm run compile -- -w\" \"rojo serve\""
 	},
 	"license": "ISC",
 	"keywords": [],
@@ -38,6 +39,7 @@
 		"@rbxts/charm": "^0.10.0",
 		"@rbxts/charm-sync": "^0.3.0",
 		"@rbxts/lyra": "^0.5.0-rc.0",
+		"@rbxts/object-utils": "^1.0.4",
 		"@rbxts/services": "^1.5.5",
 		"@rbxts/t": "^3.2.1",
 		"@rbxts/ui-labs": "^2.4.0",

@@ -22,9 +22,19 @@
       }
     },
     {
-      "label": "Blink",
+      "label": "Blink-Compile",
       "type": "npm",
-      "script": "blink",
+      "script": "blink-compile",
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      }
+    },
+    {
+      "label": "Blink-Watch",
+      "type": "npm",
+      "script": "blink-watch",
       "problemMatcher": [],
       "group": {
         "kind": "build",

@@ -1,8 +1,9 @@
-// Types
-import type { PlayerData } from "shared/atoms/dataStore";
+// Packages
+import Network from "@network/server";
 
 const defaultData = {
-	units: [],
-} satisfies PlayerData;
+	gems: 0,
+	coins: 0,
+} satisfies Network.State.PlayerData.Default;
 
 export default defaultData;

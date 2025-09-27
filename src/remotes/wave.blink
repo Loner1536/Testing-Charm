@@ -1,0 +1,5 @@
+event vote {
+    From: Client,
+    Type: Reliable,
+    Call: SingleSync,
+}

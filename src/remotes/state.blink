@@ -1,0 +1,57 @@
+scope PlayerData {
+    struct Default {
+        gems: u32,
+        coins: u32,
+    }
+
+    struct Patch {
+        gems: u32?,
+        coins: u32?,
+    }
+
+    map DefaultMap = { [string]: PlayerData.Default}
+    map PatchMap = { [string]: PlayerData.Patch}
+}
+
+scope WaveData {
+    struct Default {
+        hpStocks: u8(0..5),
+        activeWave: boolean,
+        votes: u8,
+        wave: u16
+    }
+    struct Patch {
+        hpStocks: u8(0..5)?, 
+        activeWave: boolean?,
+        votes: u8?,
+        wave: u16?
+    }
+}
+
+enum PayloadSync = "type" {
+    init {
+        data: struct {
+            players: PlayerData.DefaultMap,
+            waveData: WaveData.Default
+        }
+    },
+    patch {
+        data: struct {
+            players: PlayerData.PatchMap?,
+            waveData: WaveData.Patch?
+        }
+    }
+}
+
+event sync {
+    From: Server,
+    Type: Reliable,
+    Call: SingleSync,
+    Data: PayloadSync
+}
+
+event init {
+    From: Client,
+    Type: Reliable,
+    Call: SingleSync,
+}

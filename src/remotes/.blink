@@ -8,4 +8,5 @@ option UsePolling = false
 option Typescript = true
 option Casing = Camel
 
-import "./dataStore.blink" as DataStore
+import "./state.blink" as State
+import "./wave.blink" as Wave
