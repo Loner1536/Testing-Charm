@@ -1,4 +1,5 @@
 // Packages
+import Network from "@network/client";
 import { Source } from "@rbxts/vide";
 
 export type PlayerData = {
@@ -7,14 +8,27 @@ export type PlayerData = {
 };
 
 export type WaveData = {
+	maxStocks: Source<number>;
+	hpStocks: Source<number>;
 	activeWave: Source<boolean>;
 	votes: Source<number>;
 	wave: Source<number>;
+	act: Source<number>;
+};
+
+export type TopMenu = {
+	visible: Source<boolean>;
 };
 
 type InterfaceProps = {
 	playerData: PlayerData;
 	waveData: WaveData;
+
+	network: {
+		wave: (typeof Network)["Wave"];
+	};
+
+	topMenu: TopMenu;
 };
 
 export default InterfaceProps;

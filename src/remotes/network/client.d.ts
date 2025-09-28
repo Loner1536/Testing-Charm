@@ -10,12 +10,12 @@ export declare namespace State {
 		type PatchMap = Map<string, { gems?: number | undefined, coins?: number | undefined }>
 	}
 	export namespace WaveData {
-		type Default = { hpStocks: number, activeWave: boolean, votes: number, wave: number }
-		type Patch = { hpStocks?: number | undefined, activeWave?: boolean | undefined, votes?: number | undefined, wave?: number | undefined }
+		type Default = { mapId: string, type: "story" | "raid", hpStocks: number, activeWave: boolean, votes: number, wave: number, act: number }
+		type Patch = { mapId?: string | undefined, type?: "story" | "raid" | undefined, hpStocks?: number | undefined, activeWave?: boolean | undefined, votes?: number | undefined, wave?: number | undefined, act?: number | undefined }
 	}
-	type PayloadSync = { type: "init", data: { players: Map<string, { gems: number, coins: number }>, waveData: { hpStocks: number, activeWave: boolean, votes: number, wave: number } } } | { type: "patch", data: { players?: Map<string, { gems?: number | undefined, coins?: number | undefined }> | undefined, waveData?: { hpStocks?: number | undefined, activeWave?: boolean | undefined, votes?: number | undefined, wave?: number | undefined } | undefined } }
+	type PayloadSync = { type: "init", data: { players: Map<string, { gems: number, coins: number }>, waveData: { mapId: string, type: "story" | "raid", hpStocks: number, activeWave: boolean, votes: number, wave: number, act: number } } } | { type: "patch", data: { players?: Map<string, { gems?: number | undefined, coins?: number | undefined }> | undefined, waveData?: { mapId?: string | undefined, type?: "story" | "raid" | undefined, hpStocks?: number | undefined, activeWave?: boolean | undefined, votes?: number | undefined, wave?: number | undefined, act?: number | undefined } | undefined } }
 	export const sync: {
-		on: (Listener: (Value: { type: "init", data: { players: Map<string, { gems: number, coins: number }>, waveData: { hpStocks: number, activeWave: boolean, votes: number, wave: number } } } | { type: "patch", data: { players?: Map<string, { gems?: number | undefined, coins?: number | undefined }> | undefined, waveData?: { hpStocks?: number | undefined, activeWave?: boolean | undefined, votes?: number | undefined, wave?: number | undefined } | undefined } }) => void) => (() => void)
+		on: (Listener: (Value: { type: "init", data: { players: Map<string, { gems: number, coins: number }>, waveData: { mapId: string, type: "story" | "raid", hpStocks: number, activeWave: boolean, votes: number, wave: number, act: number } } } | { type: "patch", data: { players?: Map<string, { gems?: number | undefined, coins?: number | undefined }> | undefined, waveData?: { mapId?: string | undefined, type?: "story" | "raid" | undefined, hpStocks?: number | undefined, activeWave?: boolean | undefined, votes?: number | undefined, wave?: number | undefined, act?: number | undefined } | undefined } }) => void) => (() => void)
 	}
 	export const init: {
 		fire: (Value: void) => void

@@ -15,16 +15,22 @@ scope PlayerData {
 
 scope WaveData {
     struct Default {
+        mapId: string,
+        type: enum { story, raid },
         hpStocks: u8(0..5),
         activeWave: boolean,
         votes: u8,
-        wave: u16
+        wave: u32,
+        act: u8
     }
     struct Patch {
+        mapId: string?,
+        type: enum { story, raid }?,
         hpStocks: u8(0..5)?, 
         activeWave: boolean?,
         votes: u8?,
-        wave: u16?
+        wave: u32?,
+        act: u8?
     }
 }
 

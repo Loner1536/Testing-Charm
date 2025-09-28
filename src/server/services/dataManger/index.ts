@@ -17,7 +17,7 @@ import schema from "./schema";
 import StateManager from "../stateManager";
 
 @Service()
-export default class DataStore implements OnInit {
+export default class DataManager implements OnInit {
 	private store = createPlayerStore<Network.State.PlayerData.Default>({
 		name: "PlayerData",
 		template: template,
