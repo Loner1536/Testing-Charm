@@ -1,28 +1,22 @@
 {
     "name": "Tower Defense",
-    // Use the main Dockerfile
     "build": {
         "dockerfile": "./Dockerfile",
         "context": ".."
     },
-    // Override the entrypoint to avoid conflicts with volume mounts
-    "shutdownAction": "stopContainer",
+    "remoteUser": "node",
     "workspaceFolder": "/workspace",
-    // Mount the source code
-    // "mounts": [
-    //     "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached"
-    // ],
-    // Use 'forwardPorts' to make a list of ports inside the container available locally.
+    "shutdownAction": "stopContainer",
+    "postStartCommand": "bash ./scripts/shell/postStart.sh",
+    "mounts": [
+        "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached"
+    ],
     "forwardPorts": [
         34872
     ],
-    // Configure container user
-    "remoteUser": "node",
-    // Ensure proper container environment
     "containerEnv": {
         "NODE_ENV": "development"
     },
-    // Set *default* container specific settings.json values on container create.
     "customizations": {
         "vscode": {
             "settings": {

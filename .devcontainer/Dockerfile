@@ -132,5 +132,4 @@ EXPOSE 34872
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD node --version && npm --version || exit 1
 
-ENTRYPOINT ["/workspace/scripts/shell/postStart.sh"]
 CMD ["zsh"]
