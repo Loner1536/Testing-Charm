@@ -10,7 +10,7 @@ export type PlayerData = {
 export type WaveData = {
 	maxStocks: Source<number>;
 	hpStocks: Source<number>;
-	activeWave: Source<boolean>;
+	vote: Source<boolean>;
 	votes: Source<number>;
 	wave: Source<number>;
 	act: Source<number>;
@@ -25,7 +25,9 @@ type InterfaceProps = {
 	waveData: WaveData;
 
 	network: {
-		wave: (typeof Network)["Wave"];
+		wave: {
+			vote: (typeof Network)["Wave"]["vote"];
+		};
 	};
 
 	topMenu: TopMenu;

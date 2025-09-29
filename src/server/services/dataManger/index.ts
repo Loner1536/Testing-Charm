@@ -64,13 +64,6 @@ export default class DataManager implements OnInit {
 			try {
 				await this.store.loadAsync(player);
 
-				task.delay(2, () => {
-					this.store.updateAsync(player, (data) => {
-						data.coins = 100;
-						return true;
-					});
-				});
-
 				this.stateManager.playerData.set(tostring(player.UserId), await this.store.get(player));
 
 				Promise.fromEvent(Players.PlayerRemoving, (left) => player === left)

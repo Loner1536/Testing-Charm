@@ -18,7 +18,7 @@ scope WaveData {
         mapId: string,
         type: enum { story, raid },
         hpStocks: u8(0..5),
-        activeWave: boolean,
+        vote: boolean,
         votes: u8,
         wave: u32,
         act: u8
@@ -27,7 +27,7 @@ scope WaveData {
         mapId: string?,
         type: enum { story, raid }?,
         hpStocks: u8(0..5)?, 
-        activeWave: boolean?,
+        vote: boolean?,
         votes: u8?,
         wave: u32?,
         act: u8?

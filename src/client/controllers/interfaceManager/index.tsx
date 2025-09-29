@@ -66,14 +66,16 @@ export default class InterfaceManager implements OnStart {
 			waveData: {
 				maxStocks: useAtom(() => TypeConfiguration[this.stateManager.get("waveData")()?.type].maxStocks),
 				hpStocks: useAtom(() => this.stateManager.get("waveData")()?.hpStocks ?? 0),
-				activeWave: useAtom(() => this.stateManager.get("waveData")()?.activeWave ?? false),
+				vote: useAtom(() => this.stateManager.get("waveData")()?.vote ?? false),
 				votes: useAtom(() => this.stateManager.get("waveData")()?.votes ?? 0),
 				wave: useAtom(() => this.stateManager.get("waveData")()?.wave ?? 0),
 				act: useAtom(() => this.stateManager.get("waveData")()?.act ?? 0),
 			},
 
 			network: {
-				wave: Network.Wave,
+				wave: {
+					vote: Network.Wave.vote,
+				},
 			},
 
 			topMenu: {

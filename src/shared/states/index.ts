@@ -8,7 +8,7 @@ const states = {
 		mapId: "test",
 		type: "story",
 		hpStocks: 0,
-		activeWave: false,
+		vote: false,
 		votes: 0,
 		wave: 0,
 		act: 0,

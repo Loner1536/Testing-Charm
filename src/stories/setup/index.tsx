@@ -22,6 +22,7 @@ import InterfaceManager from "@client/controllers/interfaceManager";
 import ClientStateManager from "@client/controllers/stateManager";
 import ServerStateManager from "@server/services/stateManager";
 import NetworkManager from "@server/services/networkManager";
+import JecsManager from "@server/services/jecsManager";
 import WaveManager from "@server/services/waveManager";
 import DataManager from "@server/services/dataManger";
 
@@ -39,10 +40,11 @@ export default function (
 		UserId: math.random(1, 1000000000),
 	} as unknown as Player;
 
+	const jecsManager = new JecsManager();
 	const clientStateManager = new ClientStateManager();
 	const serverStateManager = new ServerStateManager();
 	const dataManager = new DataManager(serverStateManager);
-	const waveManager = new WaveManager(serverStateManager);
+	const waveManager = new WaveManager(serverStateManager, jecsManager);
 	const networkManager = new NetworkManager(serverStateManager, dataManager, waveManager);
 
 	const interfaceProps = new InterfaceManager(clientStateManager).buildProps(mockedPlayer);

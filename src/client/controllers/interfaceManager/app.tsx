@@ -8,7 +8,6 @@ import type * as Types from "@shared/types";
 import TopMenuComponents from "@shared/interface/topMenu";
 
 export default function ForgeApp({ props }: { props: Types.InterfaceProps.default }) {
-	print("Rendering Forge App");
 	return [
 		Forge.add({
 			component: TopMenuComponents,

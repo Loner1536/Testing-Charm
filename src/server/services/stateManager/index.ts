@@ -24,6 +24,7 @@ export default class StateManager implements OnInit {
 
 	onInit(): void {
 		this.syncer.connect((player, payload) => {
+			print(this.filterPayload(tostring(player.UserId), payload));
 			Network.State.sync.fire(player, this.filterPayload(tostring(player.UserId), payload) as never);
 		});
 		Network.State.init.on((player) => {

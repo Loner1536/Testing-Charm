@@ -1,72 +1,184 @@
 // Services
-import { Players } from "@rbxts/services";
+import { ServerStorage, Workspace, RunService, HttpService, Players } from "@rbxts/services";
 
 // Packages
 import { OnStart, Service } from "@flamework/core";
 import Network from "@network/server";
-
-// Configurations
-import mapConfiguration, { TypeConfiguration } from "@shared/configurations/maps";
+import { Entity } from "@rbxts/jecs";
 
 // Dependencies
 import StateManager from "../stateManager";
+import JecsManager from "../jecsManager";
+
+// Assets
+const maps = ServerStorage.WaitForChild("assets").WaitForChild("models").WaitForChild("maps") as Folder;
 
 type TeleportData = {
-	type: keyof typeof mapConfiguration;
+	type: "story" | "raid";
 	id: string;
 	act: number;
 };
 
 @Service()
 export default class WaveManager implements OnStart {
-	private mapConfig!: (typeof mapConfiguration)[TeleportData["type"]];
-	private state!: Network.State.WaveData.Default;
+	private getState: () => Network.State.WaveData.Default;
+	private enemies: Map<string, Entity> = new Map();
+	private votes: Map<string, boolean> = new Map();
+	private enemiesConnection!: RBXScriptConnection;
 	private teleportData!: TeleportData;
-	private votes: string[] = [];
 
-	constructor(private stateManager: StateManager) {
-		this.state = this.stateManager.waveData.get();
+	constructor(
+		private stateManager: StateManager,
+		private jecsManager: JecsManager,
+	) {
+		this.getState = this.stateManager.waveData.get;
 	}
 
-	onStart(): void {
-		const teleportData: TeleportData = {
-			type: "story",
-			id: "test",
-			act: 1,
-		};
+	onStart() {
+		this.teleportData = { type: "story", id: "test", act: 1 };
 
-		this.teleportData = teleportData;
+		const map = maps.FindFirstChild(this.teleportData.id);
+		if (!map) error(`Map ${this.teleportData.id} not found`);
+		map.Clone().Parent = Workspace;
 
-		const mapConfig = this.getMapConfig();
-		print("mapConfig", mapConfig);
-
+		// Initialize wave state
 		this.stateManager.waveData.update((data) => {
-			data.hpStocks = TypeConfiguration[this.teleportData.type].maxStocks;
-			data.type = teleportData.type;
-			data.mapId = teleportData.id;
-			data.act = teleportData.act;
-
+			data.hpStocks = 3;
+			data.type = this.teleportData.type;
+			data.mapId = this.teleportData.id;
+			data.act = this.teleportData.act;
+			data.wave = 0;
 			return data;
 		});
+
+		this.enemiesConnection = RunService.Heartbeat.Connect((dt) => this.updateEnemies(dt));
 	}
 
-	private getMapConfig() {
-		const mapTypeConfig = mapConfiguration[this.teleportData.type];
-		const map = mapTypeConfig;
+	/** Start a wave */
+	private startWave() {
+		this.stateManager.waveData.update((data) => {
+			data.vote = true;
+			data.wave += 1;
+			return data;
+		});
 
-		if (map) {
-			return map;
-		} else {
-			return error(`Map ${this.teleportData.id} not found under type ${this.teleportData.type}`);
+		this.spawnWaveEnemies();
+	}
+
+	private endGame() {
+		this.enemiesConnection.Disconnect();
+	}
+
+	/** Spawn enemies in ECS, no networking here */
+	private spawnWaveEnemies() {
+		const world = this.jecsManager.world;
+		const comps = this.jecsManager.components;
+		const waypoints = this.getWaypoints();
+
+		for (let i = 0; i < 10; i++) {
+			const id = HttpService.GenerateGUID(false);
+			const enemy = world.entity();
+
+			// Tag and components
+			world.add(enemy, comps.enemy);
+			world.set(enemy, comps.health, 100);
+			world.set(enemy, comps.predictedHP, 100);
+			world.set(enemy, comps.pathIndex, 0);
+			world.set(enemy, comps.position, waypoints[0]);
+			world.set(enemy, comps.speed, 8);
+			world.set(enemy, comps.enemyType, "itadori");
+
+			this.enemies.set(id, enemy);
 		}
+	}
+
+	/** Update all enemies along their path */
+	private updateEnemies(dt: number) {
+		const world = this.jecsManager.world;
+		const comps = this.jecsManager.components;
+		const waypoints = this.getWaypoints();
+
+		for (const [id, enemy] of this.enemies) {
+			const pos = world.get(enemy, comps.position);
+			const pathIndex = world.get(enemy, comps.pathIndex);
+			const speed = world.get(enemy, comps.speed);
+
+			print(`Enemy ${id} at ${pos} going to waypoint ${pathIndex}`);
+
+			if (!pos || pathIndex === undefined || speed === undefined) continue;
+
+			// Remove if reached the last waypoint
+			if (pathIndex >= waypoints.size() - 1) {
+				world.delete(enemy);
+				this.enemies.delete(id);
+
+				// Remove debug part if enabled
+				if (this.jecsManager.debug) this.removeDebugPart(id);
+
+				continue;
+			}
+
+			const target = waypoints[pathIndex + 1];
+			if (!target) continue;
+
+			const dir = target.sub(pos).Unit;
+			const dist = speed * dt;
+			const nextPos = target.sub(pos).Magnitude <= dist ? target : pos.add(dir.mul(dist));
+
+			world.set(enemy, comps.position, nextPos);
+
+			if (nextPos === target) {
+				world.set(enemy, comps.pathIndex, pathIndex + 1);
+			}
+
+			// Debug visualization
+			if (this.jecsManager.debug) {
+				if (!this.debugParts.has(id)) this.spawnDebugPart(id, nextPos);
+				else this.updateDebugPart(id, nextPos);
+			}
+		}
+	}
+
+	/** Debug helpers */
+	private debugParts: Map<string, BasePart> = new Map();
+
+	private spawnDebugPart(id: string, position: Vector3) {
+		const part = new Instance("Part");
+		part.Anchored = true;
+		part.CanCollide = false;
+		part.Size = new Vector3(1, 1, 1);
+		part.Color = Color3.fromRGB(255, 0, 0);
+		part.Position = position;
+		part.Parent = Workspace;
+		this.debugParts.set(id, part);
+	}
+
+	private updateDebugPart(id: string, position: Vector3) {
+		const part = this.debugParts.get(id);
+		if (part) part.Position = position;
+	}
+
+	private removeDebugPart(id: string) {
+		const part = this.debugParts.get(id);
+		if (part) {
+			part.Destroy();
+			this.debugParts.delete(id);
+		}
+	}
+
+	/** Get waypoints from map */
+	private getWaypoints(): Vector3[] {
+		const routeFolder = Workspace.WaitForChild(this.teleportData.id).WaitForChild("route") as Folder;
+		const parts = routeFolder.GetChildren() as BasePart[];
+		const sorted = parts.sort((a, b) => tonumber(a.Name)! < tonumber(b.Name)!);
+		return sorted.map((p) => p.Position);
 	}
 
 	public network = {
 		vote: (player: Player) => {
-			print(this.state);
-			if (this.state.activeWave || this.votes.includes(tostring(player.UserId))) return;
+			if (this.votes.has(tostring(player.UserId))) return;
 			print(`${player.Name} voted to start the wave`);
-			this.votes.push(tostring(player.UserId));
+			this.votes.set(tostring(player.UserId), true);
 
 			this.stateManager.waveData.update((data) => {
 				data.votes = this.votes.size();
@@ -74,11 +186,8 @@ export default class WaveManager implements OnStart {
 			});
 
 			if (this.votes.size() >= Players.GetPlayers().size()) {
-				print("Starting wave due to votes");
-				this.stateManager.waveData.update((data) => {
-					data.activeWave = true;
-					return data;
-				});
+				this.votes.clear();
+				this.startWave();
 			}
 		},
 	};

@@ -11,8 +11,6 @@ import type * as Types from "@shared/types";
 import px from "@shared/utility/px";
 
 export default function TopMenu({ props }: { props: Types.InterfaceProps.default }) {
-	print("Rendering Top Menu");
-
 	const onHover = source(false);
 	const onPress = source(false);
 
@@ -104,7 +102,7 @@ export default function TopMenu({ props }: { props: Types.InterfaceProps.default
 					Font={"FredokaOne"}
 					TextSize={px.useNumber(28)}
 					Text={() => {
-						return `Wave  ${props.waveData.wave()}<font color="rgb(150, 150, 150)">/${1 ?? "∞"}</font>`;
+						return `${props.waveData.wave()}<font color="rgb(150, 150, 150)">/${1 ?? "∞"}</font>`;
 					}}
 					TextXAlignment={"Right"}
 					TextYAlignment={"Center"}
@@ -140,7 +138,7 @@ export default function TopMenu({ props }: { props: Types.InterfaceProps.default
 				AnchorPoint={new Vector2(0.5, 0)}
 				Position={px.useSpring(
 					(scale) => {
-						const yOffset = props.waveData.activeWave() ? -75 : 50;
+						const yOffset = props.waveData.vote() ? -75 : 50;
 						return scale.useUDim2(0.5, 0, 0, yOffset);
 					},
 					0.25,

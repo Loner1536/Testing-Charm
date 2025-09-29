@@ -34,16 +34,16 @@
 				"$path": "dist/out/remotes/network"
 			},
 			"shared": {
-				"$path": "dist/out/shared",
-				"assets": {
-					"$path": "assets/shared"
-				}
+				"$path": "dist/out/shared"
 			},
 			"client": {
 				"$path": "dist/out/client",
 				"$properties": {
 					"RunContext": "Client"
 				}
+			},
+			"assets": {
+				"$path": "assets/shared"
 			}
 		},
 		"Workspace": {

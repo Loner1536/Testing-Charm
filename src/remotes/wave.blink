@@ -3,3 +3,9 @@ event vote {
     Type: Reliable,
     Call: SingleSync,
 }
+
+event start {
+    From: Server,
+    Type: Reliable,
+    Call: SingleSync,
+}
