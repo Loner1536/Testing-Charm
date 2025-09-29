@@ -89,7 +89,7 @@ export default function (
 		Wave: {
 			vote: {
 				fire: (player: Player) => {
-					print(`mocked vote from ${player.Name}`);
+					networkManager.wave.vote(player);
 				},
 			},
 		},

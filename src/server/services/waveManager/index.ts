@@ -9,6 +9,7 @@ import { Entity } from "@rbxts/jecs";
 // Dependencies
 import StateManager from "../stateManager";
 import JecsManager from "../jecsManager";
+import Object from "@rbxts/object-utils";
 
 // Assets
 const maps = ServerStorage.WaitForChild("assets").WaitForChild("models").WaitForChild("maps") as Folder;
@@ -41,7 +42,6 @@ export default class WaveManager implements OnStart {
 		if (!map) error(`Map ${this.teleportData.id} not found`);
 		map.Clone().Parent = Workspace;
 
-		// Initialize wave state
 		this.stateManager.waveData.update((data) => {
 			data.hpStocks = 3;
 			data.type = this.teleportData.type;
@@ -54,7 +54,6 @@ export default class WaveManager implements OnStart {
 		this.enemiesConnection = RunService.Heartbeat.Connect((dt) => this.updateEnemies(dt));
 	}
 
-	/** Start a wave */
 	private startWave() {
 		this.stateManager.waveData.update((data) => {
 			data.vote = true;
@@ -69,13 +68,12 @@ export default class WaveManager implements OnStart {
 		this.enemiesConnection.Disconnect();
 	}
 
-	/** Spawn enemies in ECS, no networking here */
 	private spawnWaveEnemies() {
 		const world = this.jecsManager.world;
 		const comps = this.jecsManager.components;
 		const waypoints = this.getWaypoints();
 
-		for (let i = 0; i < 10; i++) {
+		for (let i = 0; i < 2; i++) {
 			const id = HttpService.GenerateGUID(false);
 			const enemy = world.entity();
 
@@ -85,10 +83,12 @@ export default class WaveManager implements OnStart {
 			world.set(enemy, comps.predictedHP, 100);
 			world.set(enemy, comps.pathIndex, 0);
 			world.set(enemy, comps.position, waypoints[0]);
-			world.set(enemy, comps.speed, 8);
+			world.set(enemy, comps.speed, 50);
 			world.set(enemy, comps.enemyType, "itadori");
 
 			this.enemies.set(id, enemy);
+
+			task.wait(0.5);
 		}
 	}
 
@@ -102,8 +102,6 @@ export default class WaveManager implements OnStart {
 			const pos = world.get(enemy, comps.position);
 			const pathIndex = world.get(enemy, comps.pathIndex);
 			const speed = world.get(enemy, comps.speed);
-
-			print(`Enemy ${id} at ${pos} going to waypoint ${pathIndex}`);
 
 			if (!pos || pathIndex === undefined || speed === undefined) continue;
 

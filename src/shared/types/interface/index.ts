@@ -8,6 +8,7 @@ export type PlayerData = {
 };
 
 export type WaveData = {
+	mapId: Source<string>;
 	maxStocks: Source<number>;
 	hpStocks: Source<number>;
 	vote: Source<boolean>;

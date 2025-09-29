@@ -6,18 +6,21 @@ import Network from "@network/client";
 // Components
 import states from "@shared/states";
 
+// Children
+import PlayerData from "./playerData";
+import WaveData from "./waveData";
+
 @Controller()
 export default class StateManager implements OnInit {
 	private syncer = client({ atoms: states });
+
+	public playerData = new PlayerData();
+	public waveData = new WaveData();
 
 	onInit(): void {
 		Network.State.sync.on((payload) => {
 			this.syncer.sync(payload as never);
 		});
 		Network.State.init.fire();
-	}
-
-	public get<K extends keyof typeof states>(id: K): (typeof states)[K] {
-		return states[id];
 	}
 }

@@ -1,5 +1,4 @@
 // Packages
-import { SyncPayload } from "@rbxts/charm-sync";
 import Object from "@rbxts/object-utils";
 import Network from "@network/server";
 

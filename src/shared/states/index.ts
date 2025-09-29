@@ -4,6 +4,7 @@ import { atom } from "@rbxts/charm";
 
 const states = {
 	players: atom<Map<string, Network.State.PlayerData.Default>>(new Map()),
+
 	waveData: atom<Network.State.WaveData.Default>({
 		mapId: "test",
 		type: "story",

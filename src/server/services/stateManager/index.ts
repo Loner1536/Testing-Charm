@@ -13,7 +13,7 @@ import WaveData from "./waveData";
 
 @Service()
 export default class StateManager implements OnInit {
-	private syncer = server({ atoms: states });
+	private syncer = server({ atoms: states, autoSerialize: false });
 
 	public playerData = new PlayerData();
 	public waveData = new WaveData();
@@ -24,8 +24,7 @@ export default class StateManager implements OnInit {
 
 	onInit(): void {
 		this.syncer.connect((player, payload) => {
-			print(this.filterPayload(tostring(player.UserId), payload));
-			Network.State.sync.fire(player, this.filterPayload(tostring(player.UserId), payload) as never);
+			Network.State.sync.fire(player, this.filterPayload(tostring(player.UserId), payload as never) as never);
 		});
 		Network.State.init.on((player) => {
 			this.syncer.hydrate(player);

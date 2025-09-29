@@ -9,7 +9,7 @@ import { registerComponents } from "@shared/ecs/components";
 export default class JecsManager implements OnStart {
 	public components!: ReturnType<typeof registerComponents>;
 	public world = world();
-	public debug = false;
+	public debug = true;
 
 	onStart() {
 		this.components = registerComponents(this.world);

@@ -1,16 +1,15 @@
 // Services
-import { Workspace, ReplicatedStorage } from "@rbxts/services";
+import { Workspace, RunService } from "@rbxts/services";
 
 // Packages
 import { OnStart, Controller } from "@flamework/core";
-import Network from "@network/client";
 
 // Dependencies
 import StateManager from "../stateManager";
 
 class EnemyVisual {
 	constructor(
-		public model: Model,
+		public part: BasePart,
 		public wpIndex: number,
 	) {}
 }
@@ -18,47 +17,79 @@ class EnemyVisual {
 @Controller()
 export default class EnemyManager implements OnStart {
 	private visuals = new Map<string, EnemyVisual>();
+	private waypoints: BasePart[] = [];
+	private debug = true;
 
 	constructor(private stateManager: StateManager) {}
 
 	onStart() {
-		const waveData = this.stateManager.get("waveData");
+		this.waypoints = this.getWaypoints();
 
-		// waveData((state) => {
-		// 	state.enemies.forEach((enemyState) => {
-		// 		if (!this.visuals.has(enemyState.id)) {
-		// 			this.spawnEnemy(enemyState);
-		// 		} else {
-		// 			this.updateEnemy(enemyState);
-		// 		}
-		// 	});
+		// Animate enemies each render step
 
-		// 	for (const [id, visual] of this.visuals) {
-		// 		if (!state.enemies.find((e) => e.id === id)) {
-		// 			visual.model.Destroy();
-		// 			this.visuals.delete(id);
-		// 		}
-		// 	}
-		// });
-
-		// Network.Wave.start.on(() => this.spawnEnemy());
+		// RunService.RenderStepped.Connect((dt) => this.animateEnemies(dt)); // TODO: uncomment when replecs work
 	}
 
-	private spawnEnemy(enemyState: { id: string; type: string; wpIndex: number; hp: number }) {
-		const template = ReplicatedStorage.WaitForChild("assets")
-			.WaitForChild("models")
-			.WaitForChild("enemies")
-			.FindFirstChild(enemyState.type) as Model;
+	private spawnEnemy(id: string, enemyState: { pathIndex: number; hp: number }) {
+		if (!this.debug) return;
 
-		const model = template.Clone();
-		model.Parent = Workspace;
+		const part = new Instance("Part");
+		part.Anchored = true;
+		part.CanCollide = false;
+		part.Size = new Vector3(1, 1, 1);
+		part.Color = Color3.fromRGB(0, 255, 0);
+		part.Position = this.waypoints[enemyState.pathIndex]?.Position ?? Vector3.zero;
+		part.Parent = Workspace;
 
-		const visual = new EnemyVisual(model, enemyState.wpIndex);
-		this.visuals.set(enemyState.id, visual);
+		const visual = new EnemyVisual(part, enemyState.pathIndex);
+		this.visuals.set(id, visual);
 	}
 
-	private getWaypoints() {
-		const routeFolder = Workspace.WaitForChild("test").WaitForChild("route") as Folder;
-		return routeFolder.GetChildren().sort((a, b) => tonumber(a.Name)! < tonumber(b.Name)!);
+	public updateEnemy(id: string, enemyState: { pathIndex: number; hp: number }) {
+		const visual = this.visuals.get(id);
+		if (visual) visual.wpIndex = enemyState.pathIndex;
 	}
+
+	private getWaypoints(): BasePart[] {
+		const mapId = this.stateManager.waveData.state().mapId;
+		const routeFolder = Workspace.FindFirstChild(mapId)?.FindFirstChild("route") as Folder;
+		if (!routeFolder) return [];
+		return routeFolder
+			.GetChildren()
+			.filter((p) => p.IsA("BasePart"))
+			.sort((a, b) => tonumber(a.Name)! < tonumber(b.Name)!);
+	}
+
+	// TODO: Recreate this when I have replecs working
+
+	// private animateEnemies(dt: number) {
+	// 	for (const [id, visual] of this.visuals) {
+	// 		const enemyState = this.stateManager.waveData.state().enemies.find((enemy) => enemy.id === id);
+	// 		if (!enemyState) continue; // Enemy was removed
+
+	// 		// Waypoints
+	// 		if (this.waypoints.size() === 0) continue;
+	// 		const currentIndex = visual.wpIndex;
+	// 		const targetIndex = math.clamp(currentIndex, 0, this.waypoints.size() - 1);
+	// 		const targetPos = this.waypoints[targetIndex].Position;
+
+	// 		// Move exactly like server
+	// 		const dir = targetPos.sub(visual.part.Position).Unit;
+	// 		const speed = enemyState.speed;
+	// 		const dist = speed * dt;
+	// 		const nextPos =
+	// 			targetPos.sub(visual.part.Position).Magnitude <= dist
+	// 				? targetPos
+	// 				: visual.part.Position.add(dir.mul(dist));
+
+	// 		visual.part.Position = nextPos;
+
+	// 		// If reached waypoint, increment index (simulate server)
+	// 		if (nextPos === targetPos) {
+	// 			visual.wpIndex = currentIndex + 1;
+	// 			// Optionally, you can check server state here to reconcile
+	// 			// visual.wpIndex = math.max(enemyState.pathIndex, visual.wpIndex);
+	// 		}
+	// 	}
+	// }
 }

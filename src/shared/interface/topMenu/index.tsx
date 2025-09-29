@@ -111,7 +111,7 @@ export default function TopMenu({ props }: { props: Types.InterfaceProps.default
 					<uistroke Thickness={px.useNumber(2.5)} Transparency={0.25} />
 				</textlabel>
 				<textlabel
-					Name={"Wave Count"}
+					Name={"Game Timer"}
 					BackgroundTransparency={1}
 					AnchorPoint={new Vector2(0, 0.5)}
 					Position={px.useUDim2(1, 10, 0.5, 0)}
@@ -120,7 +120,7 @@ export default function TopMenu({ props }: { props: Types.InterfaceProps.default
 					Font={"FredokaOne"}
 					TextSize={px.useNumber(28)}
 					Text={() => {
-						return `00:00:00`;
+						return "00:00:00";
 					}}
 					TextXAlignment={"Left"}
 					TextYAlignment={"Center"}
