@@ -1,4 +1,5 @@
-import jecs, { World, Entity, Tag } from "@rbxts/jecs";
+import Jecs, { World, Entity, Tag } from "@rbxts/jecs";
+import Replecs from "@rbxts/replecs";
 
 // Enemy Components
 export type EnemyComponents = {
@@ -24,7 +25,7 @@ export type Components = ReturnType<typeof registerComponents>;
 
 export function registerComponents(world: World) {
 	const enemy = {
-		enemy: jecs.tag(),
+		enemy: Jecs.tag(),
 		health: world.component<number>(),
 		predictedHP: world.component<number>(),
 		pathIndex: world.component<number>(),
@@ -34,15 +35,22 @@ export function registerComponents(world: World) {
 	} satisfies EnemyComponents;
 
 	const tower = {
-		tower: jecs.tag(),
+		tower: Jecs.tag(),
 		damage: world.component<number>(),
 		range: world.component<number>(),
 		spa: world.component<number>(),
 		target: world.component<Entity | undefined>(),
 	} satisfies TowerComponents;
 
-	return {
+	const components = {
 		...enemy,
 		...tower,
 	};
+
+	for (const [name, component] of pairs(components)) {
+		world.set(component, Jecs.Name, name);
+		world.add(component, Replecs.shared);
+	}
+
+	return components;
 }

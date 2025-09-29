@@ -10,3 +10,4 @@ option Casing = Camel
 
 import "./state.blink" as State
 import "./wave.blink" as Wave
+import "./replicator.blink" as replicator

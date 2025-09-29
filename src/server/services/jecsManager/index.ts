@@ -1,14 +1,14 @@
 // Packages
 import { Service, OnStart } from "@flamework/core";
-import { world } from "@rbxts/jecs";
 
 // Components
 import { registerComponents } from "@shared/ecs/components";
+import replicator, { getWorld } from "@shared/replicator";
 
 @Service()
 export default class JecsManager implements OnStart {
 	public components!: ReturnType<typeof registerComponents>;
-	public world = world();
+	public world = getWorld();
 	public debug = true;
 
 	onStart() {

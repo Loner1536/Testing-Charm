@@ -29,3 +29,9 @@ export declare namespace Wave {
 		on: (Listener: (Value: void) => void) => (() => void)
 	}
 }
+export declare namespace replicator {
+	type data = { buf: buffer, variants: unknown[][] }
+	export const receiveFull: {
+		on: (Listener: (Value: { buf: buffer, variants: unknown[][] }) => void) => (() => void)
+	}
+}

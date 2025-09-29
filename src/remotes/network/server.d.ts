@@ -35,3 +35,12 @@ export declare namespace Wave {
 		fireList: (List: Player[], Value: void) => void
 	}
 }
+export declare namespace replicator {
+	type data = { buf: buffer, variants: unknown[][] }
+	export const receiveFull: {
+		fire: (Player: Player, Value: { buf: buffer, variants: unknown[][] }) => void
+		fireAll: (Value: { buf: buffer, variants: unknown[][] }) => void
+		fireExcept: (Except: Player, Value: { buf: buffer, variants: unknown[][] }) => void
+		fireList: (List: Player[], Value: { buf: buffer, variants: unknown[][] }) => void
+	}
+}
