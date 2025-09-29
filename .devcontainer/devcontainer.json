@@ -16,7 +16,6 @@
     "forwardPorts": [
         34872
     ],
-    "postStartCommand": "bash ./scripts/shell/postStart.sh",
     // Configure container user
     "remoteUser": "node",
     // Ensure proper container environment
