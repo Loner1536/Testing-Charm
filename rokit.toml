@@ -1,4 +1,3 @@
 [tools]
 lune = "lune-org/lune@0.10.2"
-blink = "1Axen/blink@0.18.2"
 rojo = "rojo-rbx/rojo@7.5.1"

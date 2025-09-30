@@ -4,7 +4,7 @@ import { Players, RunService } from "@rbxts/services";
 // Packages
 import { MockDataStoreService, MockMemoryStoreService, createPlayerStore } from "@rbxts/lyra";
 import { Service, OnInit } from "@flamework/core";
-import Network from "@network/server";
+import { NetworkData } from "@shared/network";
 
 // Utility
 import { safePlayerAdded } from "shared/utility/safePlayerAdded";
@@ -18,7 +18,7 @@ import StateManager from "../stateManager";
 
 @Service()
 export default class DataManager implements OnInit {
-	private store = createPlayerStore<Network.State.PlayerData.Default>({
+	private store = createPlayerStore<NetworkData.State.PlayerData.Default>({
 		name: "PlayerData",
 		template: template,
 		schema: schema,

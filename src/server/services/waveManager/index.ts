@@ -3,7 +3,7 @@ import { ServerStorage, Workspace, RunService, HttpService, Players } from "@rbx
 
 // Packages
 import { OnStart, Service } from "@flamework/core";
-import Network from "@network/server";
+import { NetworkData } from "@shared/network";
 import { Entity } from "@rbxts/jecs";
 
 // Dependencies
@@ -22,7 +22,7 @@ type TeleportData = {
 
 @Service()
 export default class WaveManager implements OnStart {
-	private getState: () => Network.State.WaveData.Default;
+	private getState: () => NetworkData.State.WaveData.Default;
 	private enemies: Map<string, Entity> = new Map();
 	private votes: Map<string, boolean> = new Map();
 	private enemiesConnection!: RBXScriptConnection;
@@ -83,12 +83,21 @@ export default class WaveManager implements OnStart {
 			world.set(enemy, comps.predictedHP, 100);
 			world.set(enemy, comps.pathIndex, 0);
 			world.set(enemy, comps.position, waypoints[0]);
-			world.set(enemy, comps.speed, 50);
+			world.set(enemy, comps.speed, 12);
 			world.set(enemy, comps.enemyType, "itadori");
+
+			this.stateManager.waveData.update((data) => {
+				data.enemies.set(id, {
+					hp: world.get(enemy, comps.health)!,
+					speed: world.get(enemy, comps.speed)!,
+					pathIndex: world.get(enemy, comps.pathIndex)!,
+				});
+				return data;
+			});
 
 			this.enemies.set(id, enemy);
 
-			task.wait(0.5);
+			task.wait(0.2);
 		}
 	}
 
@@ -112,6 +121,13 @@ export default class WaveManager implements OnStart {
 
 				// Remove debug part if enabled
 				if (this.jecsManager.debug) this.removeDebugPart(id);
+
+				this.stateManager.waveData.update((data) => {
+					if (data.hpStocks > 0) data.hpStocks -= 1;
+					data.enemies.delete(id);
+
+					return data;
+				});
 
 				continue;
 			}

@@ -1,9 +1,9 @@
 // Packages
-import Network from "@network/server";
+import { NetworkData } from "@shared/network";
 
 const defaultData = {
 	gems: 0,
-	coins: 0,
-} satisfies Network.State.PlayerData.Default;
+	gold: 0,
+} satisfies NetworkData.State.PlayerData.Default;
 
 export default defaultData;

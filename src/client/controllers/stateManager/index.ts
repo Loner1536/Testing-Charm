@@ -1,7 +1,8 @@
 // Packages
+import { fromSerializeablePayload } from "@rbxts/charm-payload-converter";
 import { OnInit, Controller } from "@flamework/core";
 import { client } from "@rbxts/charm-sync";
-import Network from "@network/client";
+import Network from "@shared/network";
 
 // Components
 import states from "@shared/states";
@@ -18,9 +19,9 @@ export default class StateManager implements OnInit {
 	public waveData = new WaveData();
 
 	onInit(): void {
-		Network.State.sync.on((payload) => {
-			this.syncer.sync(payload as never);
+		Network.client.on(Network.keys.state.sync, (payload) => {
+			this.syncer.sync(fromSerializeablePayload(payload));
 		});
-		Network.State.init.fire();
+		Network.server.fire(Network.keys.state.init);
 	}
 }

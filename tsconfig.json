@@ -42,9 +42,6 @@
 			"@assets/*": [
 				"../assets/*"
 			],
-			"@network/*": [
-				"remotes/network/*"
-			],
 		}
 	}
 }

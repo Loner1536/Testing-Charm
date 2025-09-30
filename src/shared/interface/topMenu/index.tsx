@@ -4,6 +4,9 @@ import { Players, RunService } from "@rbxts/services";
 // Packages
 import Vide, { source, spring } from "@rbxts/vide";
 
+// Configurations
+import { TypeConfiguration } from "@shared/configurations/maps";
+
 // Types
 import type * as Types from "@shared/types";
 
@@ -46,23 +49,26 @@ export default function TopMenu({ props }: { props: Types.InterfaceProps.default
 				<canvasgroup
 					Name={"Bar Clipper"}
 					BackgroundTransparency={1}
-					AnchorPoint={new Vector2(0.5, 0)}
-					Position={UDim2.fromScale(0.5, 0)}
-					Size={spring(
-						() => {
-							return UDim2.fromScale(1, 1);
-						},
-						0.4,
-						0.8,
-					)}
+					AnchorPoint={new Vector2(0, 0.5)}
+					Position={UDim2.fromScale(0, 0.5)}
+					Size={UDim2.fromScale(1, 1)}
 					ClipsDescendants={true}
 				>
 					<uicorner CornerRadius={px.useUDim(50)} />
 					<frame
 						Name={"Bar"}
-						AnchorPoint={new Vector2(0.5, 0.5)}
-						Position={UDim2.fromScale(0.5, 0.5)}
-						Size={UDim2.fromScale(1, 1)}
+						AnchorPoint={new Vector2(0, 0.5)}
+						Position={UDim2.fromScale(0, 0.5)}
+						Size={spring(
+							() => {
+								return UDim2.fromScale(
+									props.waveData.hpStocks() / TypeConfiguration[props.waveData.type()].maxStocks,
+									1,
+								);
+							},
+							0.25,
+							0.5,
+						)}
 					>
 						<uigradient
 							Color={
@@ -85,7 +91,8 @@ export default function TopMenu({ props }: { props: Types.InterfaceProps.default
 					Font={"FredokaOne"}
 					TextSize={px.useNumber(32)}
 					Text={() => {
-						return `Stocks: ${props.waveData.hpStocks()}/${props.waveData.maxStocks()}`;
+						const maxStocks = TypeConfiguration[props.waveData.type()].maxStocks;
+						return `Stocks: ${props.waveData.hpStocks()}/${maxStocks}`;
 					}}
 					TextXAlignment={"Center"}
 					TextYAlignment={"Center"}
@@ -120,7 +127,7 @@ export default function TopMenu({ props }: { props: Types.InterfaceProps.default
 					Font={"FredokaOne"}
 					TextSize={px.useNumber(28)}
 					Text={() => {
-						return "00:00:00";
+						return `${props.playerData.gold()}`;
 					}}
 					TextXAlignment={"Left"}
 					TextYAlignment={"Center"}
@@ -208,7 +215,7 @@ export default function TopMenu({ props }: { props: Types.InterfaceProps.default
 					MouseButton1Up={() => {
 						onPress(false);
 
-						props.network.wave.vote.fire();
+						props.network.server.fire(props.network.keys.wave.vote);
 					}}
 				/>
 			</frame>

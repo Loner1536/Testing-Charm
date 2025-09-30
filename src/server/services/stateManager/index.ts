@@ -1,8 +1,9 @@
 // Packages
+import { toSerializeablePayload } from "@rbxts/charm-payload-converter";
 import { OnInit, Service } from "@flamework/core";
-import { SyncPayload } from "@rbxts/charm-sync";
+import CharmSync, { SyncPayload } from "@rbxts/charm-sync";
 import { server } from "@rbxts/charm-sync";
-import Network from "@network/server";
+import Network from "@shared/network";
 
 // Components
 import states from "@shared/states";
@@ -18,16 +19,21 @@ export default class StateManager implements OnInit {
 	public playerData = new PlayerData();
 	public waveData = new WaveData();
 
-	private filterPayload(userId: string, payload: SyncPayload<typeof states>) {
-		return this.playerData.filterPlayers(userId, payload);
+	private filterPayload(player: Player, payload: SyncPayload<typeof states>): SyncPayload<typeof states> {
+		return {
+			...payload,
+			...this.playerData.filterPayload(player, payload),
+			...this.waveData.filterPayload(payload),
+		};
 	}
 
 	onInit(): void {
 		this.syncer.connect((player, payload) => {
-			Network.State.sync.fire(player, this.filterPayload(tostring(player.UserId), payload as never) as never);
+			const filteredPayload = this.filterPayload(player, payload);
+			if (CharmSync.isNone(filteredPayload)) return;
+
+			Network.client.fire(player, Network.keys.state.sync, toSerializeablePayload(filteredPayload));
 		});
-		Network.State.init.on((player) => {
-			this.syncer.hydrate(player);
-		});
+		Network.server.on(Network.keys.state.init, (player) => this.syncer.hydrate(player));
 	}
 }

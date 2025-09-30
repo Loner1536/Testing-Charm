@@ -1,11 +1,10 @@
 // Services
-import { MarketplaceService, Players, ProximityPromptService, StarterGui, Workspace } from "@rbxts/services";
+import { Players, StarterGui, Workspace } from "@rbxts/services";
 
 // Packages
 import { Controller, OnStart } from "@flamework/core";
-import { useAtom } from "@rbxts/vide-charm";
 import Vide, { source } from "@rbxts/vide";
-import Network from "@network/client";
+import Network from "@shared/network";
 import Forge from "@rbxts/forge";
 
 // Types
@@ -16,9 +15,6 @@ import px from "shared/utility/px";
 
 // Components
 import ForgeApp from "./app";
-
-// Configurations
-import mapConfiguration, { TypeConfiguration } from "@shared/configurations/maps";
 
 // Player Info
 const player = Players.LocalPlayer;
@@ -62,11 +58,7 @@ export default class InterfaceManager implements OnStart {
 			playerData: this.stateManager.playerData.get(player),
 			waveData: this.stateManager.waveData.get(),
 
-			network: {
-				wave: {
-					vote: Network.Wave.vote,
-				},
-			},
+			network: Network,
 
 			topMenu: {
 				visible: source(false),

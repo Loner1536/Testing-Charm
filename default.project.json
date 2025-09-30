@@ -30,9 +30,6 @@
 					}
 				}
 			},
-			"network": {
-				"$path": "dist/out/remotes/network"
-			},
 			"shared": {
 				"$path": "dist/out/shared"
 			},
@@ -50,6 +47,9 @@
 			"$className": "Workspace",
 			"$properties": {
 				"FilteringEnabled": true
+			},
+			"Enemies": {
+				"$className": "Folder"
 			}
 		},
 		"HttpService": {

@@ -13,7 +13,7 @@ export default class PlayerData {
 	public get(player: Player): Types.InterfaceProps.PlayerData {
 		return {
 			gems: useAtom(() => this.state().get(tostring(player.UserId))?.gems ?? 0),
-			coins: useAtom(() => this.state().get(tostring(player.UserId))?.coins ?? 0),
+			gold: useAtom(() => this.state().get(tostring(player.UserId))?.gold ?? 0),
 		};
 	}
 }

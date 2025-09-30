@@ -1,6 +1,6 @@
 // Packages
 import { OnInit, Service } from "@flamework/core";
-import Network from "@network/server";
+import Network from "@shared/network";
 
 // Dependencies
 import StateManager from "../stateManager";
@@ -24,6 +24,6 @@ export default class NetworkManager implements OnInit {
 	}
 
 	private setupWaveNetworking() {
-		Network.Wave.vote.on((player) => this.wave.vote(player));
+		Network.server.on(Network.keys.wave.vote, (player) => this.wave.vote(player));
 	}
 }

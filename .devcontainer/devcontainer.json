@@ -7,7 +7,6 @@
     "remoteUser": "node",
     "workspaceFolder": "/workspace",
     "shutdownAction": "stopContainer",
-    "postStartCommand": "bash ./scripts/shell/postStart.sh",
     "mounts": [
         "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached"
     ],
@@ -95,6 +94,7 @@
                 "redhat.vscode-yaml",
                 "filiptibell.deputy",
                 "Orta.vscode-jest",
+                "naxblox.zap-nax",
                 "eamodio.gitlens",
                 "dphfox.cuddle",
                 "mkhl.shfmt"

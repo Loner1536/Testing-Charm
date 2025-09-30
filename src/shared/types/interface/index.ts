@@ -1,21 +1,13 @@
 // Packages
-import Network from "@network/client";
+import Network, { NetworkData } from "@shared/network";
 import { Source } from "@rbxts/vide";
 
-export type PlayerData = {
-	gems: Source<number>;
-	coins: Source<number>;
+type Sourceify<T> = {
+	[K in keyof T]: Source<T[K]>;
 };
 
-export type WaveData = {
-	mapId: Source<string>;
-	maxStocks: Source<number>;
-	hpStocks: Source<number>;
-	vote: Source<boolean>;
-	votes: Source<number>;
-	wave: Source<number>;
-	act: Source<number>;
-};
+export type PlayerData = Sourceify<NetworkData.State.PlayerData.Default>;
+export type WaveData = Sourceify<NetworkData.State.WaveData.Default>;
 
 export type TopMenu = {
 	visible: Source<boolean>;
@@ -25,11 +17,7 @@ type InterfaceProps = {
 	playerData: PlayerData;
 	waveData: WaveData;
 
-	network: {
-		wave: {
-			vote: (typeof Network)["Wave"]["vote"];
-		};
-	};
+	network: typeof Network;
 
 	topMenu: TopMenu;
 };
