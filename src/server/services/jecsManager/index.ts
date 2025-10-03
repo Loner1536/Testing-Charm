@@ -3,27 +3,24 @@ import { Service, OnStart } from "@flamework/core";
 import Network from "@shared/network";
 
 // Components
-import { registerComponents } from "@shared/ecs/components";
-import { getWorld } from "@shared/replicator";
 import replicator from "@server/replicator";
+import getSim from "@shared/ecs";
 
 @Service()
 export default class JecsManager implements OnStart {
-	public components!: ReturnType<typeof registerComponents>;
-	public world = getWorld();
+	public sim = getSim();
 	public debug = true;
 
 	onStart() {
-		this.components = registerComponents(this.world);
-
 		Network.server.setCallback(
 			Network.keys.jecs.receiveFull,
 			Network.keys.jecs.receiveFullReturn,
 			(player: Player) => {
+				if (!replicator.is_player_ready(player)) {
+					return undefined;
+				}
 				replicator.mark_player_ready(player);
-
-				const [buf, variants] = replicator.get_full(player);
-				return { buf, variants };
+				return replicator.get_full(player);
 			},
 		);
 	}

@@ -1,7 +1,7 @@
 // Packages
 import type { SerializeablePayload } from "@rbxts/charm-payload-converter";
 import { MessageEmitter } from "@rbxts/tether";
-import { u8 } from "@rbxts/serio";
+import { u8, Tuple } from "@rbxts/serio";
 
 // Components
 import states from "@shared/states";
@@ -30,10 +30,7 @@ export namespace NetworkData {
 	}
 
 	export namespace Jecs {
-		export type ReplecsData = {
-			buf: buffer;
-			variants: Array<Array<unknown>>;
-		};
+		export type ReplecsData = Tuple<[buffer, unknown[][]]> | undefined;
 	}
 }
 

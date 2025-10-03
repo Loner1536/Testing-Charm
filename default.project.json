@@ -10,10 +10,7 @@
 		"ServerScriptService": {
 			"$className": "ServerScriptService",
 			"server": {
-				"$path": "dist/out/server",
-				"$properties": {
-					"RunContext": "Server"
-				}
+				"$path": "dist/out/server"
 			}
 		},
 		"ReplicatedStorage": {
@@ -34,10 +31,7 @@
 				"$path": "dist/out/shared"
 			},
 			"client": {
-				"$path": "dist/out/client",
-				"$properties": {
-					"RunContext": "Client"
-				}
+				"$path": "dist/out/client"
 			},
 			"assets": {
 				"$path": "assets/shared"

@@ -1,4 +1,6 @@
-// Packages
-import replicator from "@shared/replicator";
+// Components
+import replicator from "@shared/ecs/replicator";
 
-export default replicator.client;
+const Replicator = replicator().client;
+
+export default Replicator;
