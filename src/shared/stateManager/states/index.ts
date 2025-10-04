@@ -6,15 +6,15 @@ const states = {
 	players: atom<Map<string, NetworkData.State.PlayerData.Default>>(new Map()),
 
 	waveData: atom<NetworkData.State.WaveData.Default>({
-		mapId: "test",
+		id: "test",
 		type: "story",
 		hpStocks: 0,
 		vote: false,
+		enemies: 0,
 		votes: 0,
+		speed: 1,
 		wave: 0,
 		act: 0,
-
-		enemies: new Map(),
 	}),
 };
 

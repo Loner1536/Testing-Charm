@@ -5,7 +5,7 @@ import { Players, RunService } from "@rbxts/services";
 import Vide, { source, spring } from "@rbxts/vide";
 
 // Configurations
-import { TypeConfiguration } from "@shared/configurations/maps";
+import { typeConfiguration } from "@shared/configurations/maps";
 
 // Types
 import type * as Types from "@shared/types";
@@ -62,7 +62,7 @@ export default function TopMenu({ props }: { props: Types.InterfaceProps.default
 						Size={spring(
 							() => {
 								return UDim2.fromScale(
-									props.waveData.hpStocks() / TypeConfiguration[props.waveData.type()].maxStocks,
+									props.waveData.hpStocks() / typeConfiguration[props.waveData.type()].maxStocks,
 									1,
 								);
 							},
@@ -91,7 +91,7 @@ export default function TopMenu({ props }: { props: Types.InterfaceProps.default
 					Font={"FredokaOne"}
 					TextSize={px.useNumber(32)}
 					Text={() => {
-						const maxStocks = TypeConfiguration[props.waveData.type()].maxStocks;
+						const maxStocks = typeConfiguration[props.waveData.type()].maxStocks;
 						return `Stocks: ${props.waveData.hpStocks()}/${maxStocks}`;
 					}}
 					TextXAlignment={"Center"}
@@ -145,7 +145,7 @@ export default function TopMenu({ props }: { props: Types.InterfaceProps.default
 				AnchorPoint={new Vector2(0.5, 0)}
 				Position={px.useSpring(
 					(scale) => {
-						const yOffset = props.waveData.vote() ? -75 : 50;
+						const yOffset = !props.waveData.vote() ? -75 : 50;
 						return scale.useUDim2(0.5, 0, 0, yOffset);
 					},
 					0.25,
@@ -215,7 +215,7 @@ export default function TopMenu({ props }: { props: Types.InterfaceProps.default
 					MouseButton1Up={() => {
 						onPress(false);
 
-						props.network.server.fire(props.network.keys.wave.vote);
+						props.network.wave.vote.emit();
 					}}
 				/>
 			</frame>

@@ -5,29 +5,40 @@ import { ContextActionService } from "@rbxts/services";
 import { Controller, OnStart } from "@flamework/core";
 import Jabby from "@rbxts/jabby";
 
-// Dependencies
-import JecsManager from "../jecsManager";
+// Components
+import getSim from "@shared/ecs";
 
 @Controller()
 export class JabbyController implements OnStart {
+	private client: ReturnType<typeof Jabby.obtain_client>;
 	private bound = false;
-	private unbind?: () => void;
 
-	constructor(public jecsManager: JecsManager) {}
+	constructor() {
+		const sim = getSim();
+
+		sim.P.init("gameplay");
+
+		this.client = Jabby.obtain_client();
+	}
 
 	onStart() {
-		this.jecsManager.sim.P.init("gameplay");
-
-		const client = Jabby.obtain_client();
-
 		const createWidget = (_: unknown, state: Enum.UserInputState) => {
 			if (state !== Enum.UserInputState.Begin) {
 				return;
 			}
-			client.spawn_app(client.apps.home);
+			this.client.spawn_app(this.client.apps.home);
 		};
 
 		ContextActionService.BindAction("Open Jabby Home", createWidget, false, Enum.KeyCode.F4);
+		this.bound = true;
+	}
+
+	public destroy() {
+		if (!this.bound) return;
+
+		this.client.unmount_all();
+		ContextActionService.UnbindAction("Open Jabby Home");
+		this.bound = false;
 	}
 }
 

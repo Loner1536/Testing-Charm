@@ -4,26 +4,23 @@ import { RunService, UserInputService } from "@rbxts/services";
 // Packages
 import { register, applets, set_check_function, obtain_client } from "@rbxts/jabby";
 
-// Utility
-import { Scheduler, CollectSystems, Initialize, type OrderedSystems } from "./utility/scheduler";
+// Types
+import type * as Types from "@shared/types";
 
-// Components
-import getSim from "@shared/ecs";
-
-function start_jabby() {
+function start_jabby(sim: Types.Core.API) {
 	const prefix = RunService.IsServer() ? "Server" : "Client";
 	register({
 		applet: applets.world,
 		name: "World - " + prefix,
 		configuration: {
-			world: getSim().world,
+			world: sim.world,
 		},
 	});
 	register({
 		applet: applets.scheduler,
 		name: "Scheduler - " + prefix,
 		configuration: {
-			scheduler: Scheduler,
+			scheduler: sim.U.Scheduler.instance,
 		},
 	});
 
@@ -50,10 +47,13 @@ function start_jabby() {
 	}
 }
 
-function start(systems_order: OrderedSystems) {
-	start_jabby();
-	const events = CollectSystems();
-	Initialize(events, systems_order);
+function start(sim: Types.Core.API) {
+	if (!RunService.IsRunning()) return;
+
+	start_jabby(sim);
+
+	const events = sim.U.Scheduler.collectSystems();
+	sim.U.Scheduler.initialize(events);
 }
 
 export default start;

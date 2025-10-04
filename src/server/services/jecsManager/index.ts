@@ -9,19 +9,20 @@ import getSim from "@shared/ecs";
 @Service()
 export default class JecsManager implements OnStart {
 	public sim = getSim();
-	public debug = true;
 
+	// TODO: Find out how to serialize
 	onStart() {
-		Network.server.setCallback(
-			Network.keys.jecs.receiveFull,
-			Network.keys.jecs.receiveFullReturn,
-			(player: Player) => {
-				if (!replicator.is_player_ready(player)) {
-					return undefined;
-				}
-				replicator.mark_player_ready(player);
-				return replicator.get_full(player);
-			},
-		);
+		// Network.server.setCallback(
+		// 	Network.keys.jecs.receiveFull,
+		// 	Network.keys.jecs.receiveFullReturn,
+		// 	(player: Player) => {
+		// 		if (!replicator.is_player_ready(player)) {
+		// 			warn(`${player.Name} is not ready for full replication`);
+		// 			return undefined;
+		// 		}
+		// 		replicator.mark_player_ready(player);
+		// 		return replicator.get_full(player);
+		// 	},
+		// );
 	}
 }

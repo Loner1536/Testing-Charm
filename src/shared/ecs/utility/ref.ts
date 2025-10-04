@@ -1,55 +1,42 @@
 // Packages
 import { Entity } from "@rbxts/jecs";
 
-// Sim
-import getSim from "@shared/ecs";
+// Types
+import type * as Types from "@shared/types";
 
-const sim = getSim();
-const world = sim.world;
+export default class RefManager {
+	private refs = new Map<unknown, Entity>();
 
-const refs = new Map<unknown, Entity>();
+	constructor(public sim: Types.Core.API) {}
 
-/**
- * Gets an entity the given key references to.
- * If the key is nil, an entirely new entity is created and returned.
- * If the key doesn't reference an entity, a new entity is made for it to reference and returned.
- * @param key any
- */
-function ref(key?: unknown, initer?: (entity: Entity) => void): Entity {
-	if (!key) {
-		return world.entity();
-	}
-
-	let entity = refs.get(key);
-	if (!entity) {
-		entity = world.entity();
-
-		if (initer) {
-			initer(entity);
+	public ref(key?: unknown, initer?: (entity: Entity) => void): Entity {
+		if (key === undefined) {
+			return this.sim.world.entity();
 		}
 
-		refs.set(key, entity);
+		let entity = this.refs.get(key);
+		if (!entity) {
+			entity = this.sim.world.entity();
+
+			if (initer) initer(entity);
+
+			this.refs.set(key, entity);
+		}
+
+		return entity;
 	}
 
-	return entity;
-}
-
-function search(key: unknown): Entity | undefined {
-	if (!key) {
-		return undefined;
+	public search(key: unknown): Entity | undefined {
+		if (key === undefined) return undefined;
+		return this.refs.get(key);
 	}
-	return refs.get(key);
-}
 
-function set(key: unknown, entity: Entity) {
-	refs.set(key, entity);
-}
-
-function unlist(key: unknown) {
-	if (!key) {
-		return;
+	public set(key: unknown, entity: Entity) {
+		this.refs.set(key, entity);
 	}
-	refs.delete(key);
-}
 
-export { ref as default, search, set, unlist };
+	public unlist(key: unknown) {
+		if (key === undefined) return;
+		this.refs.delete(key);
+	}
+}

@@ -1,12 +1,14 @@
-export function interval(s: number): () => boolean {
-	let pin: number | undefined;
+export default class Interval {
+	private pin: number | undefined;
 
-	return (): boolean => {
-		if (pin === undefined) pin = os.clock();
+	constructor(private intervalSeconds: number) {}
 
-		const elapsed = os.clock() - pin > s;
-		if (elapsed) pin = os.clock();
+	public tick(): boolean {
+		if (this.pin === undefined) this.pin = os.clock();
+
+		const elapsed = os.clock() - this.pin > this.intervalSeconds;
+		if (elapsed) this.pin = os.clock();
 
 		return elapsed;
-	};
+	}
 }

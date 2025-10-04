@@ -1,20 +1,20 @@
 // Packages
-import { World, Entity } from "@rbxts/jecs";
+import { World, Entity, Name } from "@rbxts/jecs";
 
 // Types
+import type { SystemId } from "@rbxts/jabby/out/jabby/modules/types";
+import type MapConfiguration from "@shared/configurations/maps";
 import type Components from "@shared/ecs/components";
-import type createCore from "@shared/ecs/core";
+import type Core from "@shared/ecs/core";
 
 export type Options = {
 	grid: Grid.Config;
 	path: Vector2[];
-	spawn: Enemy.SpawnConfig;
+	spawn: Wave.SpawnConfig;
 	onTowerReimbursed?: (tower: Entity, amount: number) => void;
 };
 
-export type API = ReturnType<typeof createCore>;
-
-export type Ctx = { world: World; C: Components; path: Vector2[] };
+export type API = Core;
 
 export namespace Route {
 	export type BuilderConfig = {
@@ -27,7 +27,7 @@ export namespace Route {
 
 	export type Info = {
 		name: string;
-		path: Vector2[];
+		path: Vector3[];
 		models: DefinedModel[];
 	};
 
@@ -45,6 +45,26 @@ export namespace Wave {
 		routeIndex: number;
 		boss?: boolean;
 	};
+	export type activeSpawn = {
+		spawnConfig: Map.WaveSpawn;
+		timer: number;
+		remaining: number;
+	};
+}
+
+export namespace Utility {
+	export namespace Scheduler {
+		export type OrderedSystems = Array<string | ((...args: unknown[]) => void)>;
+
+		export type EventMap = Map<unknown, Systems>;
+		export type Systems = System[];
+		export type System = {
+			callback: (...args: unknown[]) => void;
+			name: string;
+			id?: SystemId;
+			group?: string;
+		};
+	}
 }
 
 export namespace Spawner {
@@ -55,7 +75,7 @@ export namespace Spawner {
 	};
 }
 
-export namespace Enemy {
+export namespace Wave {
 	export type SpawnConfig = {
 		health: number;
 		speed: number;
@@ -76,15 +96,6 @@ export namespace Attack {
 	export type Type = "circle" | "line" | "cone" | "full";
 }
 
-export namespace Systems {
-	export type Context = {
-		world: World;
-		C: Components;
-		path: Vector2[];
-		routes?: Vector2[][];
-	};
-}
-
 export namespace Grid {
 	export type Config = {
 		width: number;
@@ -93,12 +104,32 @@ export namespace Grid {
 	};
 }
 
+export namespace Party {
+	export type TeleportData = {
+		id: string;
+		type: Map.Type;
+		difficulty: Map.Difficulty;
+	};
+
+	export type Host = {
+		type: "host";
+		data: TeleportData;
+	};
+	export type Member = {
+		type: "member";
+	};
+}
+
 export namespace Map {
+	export type Type = "story";
+
+	export type Difficulty = "normal" | "nightmare";
+
 	export type WaveSpawn = {
 		at: number; // seconds from wave start
 		enemy: string; // template id
 		count?: number; // default 1
-		interval?: number; // seconds between spawns when count > 1 (default 0.25)
+		interval: number; // seconds between spawns when count > 1
 		/** Optional route index (0-based). Defaults to 0 (primary route). */
 		routeIndex?: number;
 		/** Optional: mark this spawn group as boss regardless of template flag. */
@@ -115,6 +146,7 @@ export namespace Map {
 		id: string;
 		waves: Wave[];
 		interWaveDelay?: number; // seconds between waves
+		enemies: EnemyTemplate[];
 	};
 	export type EnemyTemplate = {
 		id: string;

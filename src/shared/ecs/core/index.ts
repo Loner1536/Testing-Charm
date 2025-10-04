@@ -1,65 +1,121 @@
+// Services
+import { RunService } from "@rbxts/services";
+
 // Packages
 import { world, type World } from "@rbxts/jecs";
-import Signal from "@rbxts/lemon-signal";
 
 // Types
-import type * as Types from "@shared/types";
+import * as Types from "@shared/types";
+
+// Utility
+import safePlayerAdded from "@shared/utility/safePlayerAdded";
 
 // Components
+import StateManager from "@shared/stateManager";
 import Components from "../components";
 import JabbyProfiler from "./jabby";
 import Systems from "../systems";
+import Utility from "../utility";
 import Grid from "./grid";
-
-// Children
-import WaveManager from "./managers/waveManager";
 
 export default class Core {
 	public world: World;
 	public grid: Grid;
-	public C: Components;
+
 	public P: JabbyProfiler;
+	public C: Components;
+	public U: Utility;
 	public S: Systems;
 
-	public ctx: Types.Core.Ctx;
+	public StateManager = new StateManager();
 
-	public waveManager: WaveManager;
-
-	public onWaveSpawningComplete = new Signal<() => void>();
-	public onTickComplete = new Signal<(dt: number) => void>();
+	public party = new Map<string, Types.Core.Party.Host | Types.Core.Party.Member>();
 
 	private simTime = 0;
 
 	public debug = true;
 
-	constructor(mission?: Types.Core.Map.Mission, enemyDefs?: Types.Core.Map.EnemyTemplate[]) {
+	private initPlayerAdd() {
+		safePlayerAdded((player) => {
+			if (this.party.get(tostring(player))) return;
+
+			if (this.party.size() === 0) {
+				const joinData = player.GetJoinData();
+
+				switch (RunService.IsStudio()) {
+					case true: {
+						this.party.set(tostring(player.UserId), {
+							type: "host",
+							data: {
+								id: "SandVillage",
+								difficulty: "normal",
+								type: "story",
+							},
+						});
+						break;
+					}
+					case false: {
+						const teleportData = joinData.TeleportData as Types.Core.Party.TeleportData | undefined;
+
+						if (teleportData) {
+							this.party.set(tostring(player.UserId), {
+								type: "host",
+								data: teleportData,
+							});
+						} else error("failed to retrieve teleport data from host");
+						break;
+					}
+				}
+
+				if (RunService.IsServer()) {
+					const playerData = this.party.get(tostring(player.UserId)) as Types.Core.Party.Host;
+					if (!playerData) return;
+
+					this.S.Wave.loadMap(playerData.data);
+				}
+			} else {
+				this.party.set(tostring(player.UserId), {
+					type: "member",
+				});
+			}
+		});
+	}
+
+	constructor() {
 		this.world = world();
 		this.grid = new Grid({ width: 16, height: 9, tileSize: 1 });
-		this.C = new Components(this.world);
+
+		this.C = new Components(this);
 		this.P = new JabbyProfiler();
-		this.S = new Systems();
+		this.U = new Utility(this);
+		this.S = new Systems(this);
 
-		this.ctx = { world: this.world, C: this.C, path: [] as Vector2[] };
+		if (!RunService.IsRunning()) {
+			this.S.Wave.loadMap({
+				id: "SandVillage",
+				difficulty: "normal",
+				type: "story",
+			});
+			return;
+		}
 
-		this.waveManager = new WaveManager(mission, this.ctx, () => this.debug);
+		this.initPlayerAdd();
 
-		if (mission && enemyDefs) this.waveManager.startMission(mission, enemyDefs);
+		this.U.Scheduler.system((...args) => {
+			const dt = args[0] as number;
+			return this.tick(dt);
+		});
 	}
 
 	public tick(dt: number) {
-		const effectiveDt = dt * math.clamp(this.waveManager.gameSpeed, 0, 3);
+		const effectiveDt = dt * math.clamp(this.S.Wave.gameSpeed, 0, 3);
 		this.simTime += effectiveDt;
 
-		this.waveManager.tick(dt);
-
-		const idMove = this.P.ensureSystem("ecs.moveEnemies", "update");
-		const idTower = this.P.ensureSystem("ecs.towersAttack", "update");
-		const idReconcile = this.P.ensureSystem("ecs.reconcilePredicted", "update");
-
-		this.P.run(idMove, () => this.S.Enemy.move(this.waveManager.ctx, effectiveDt));
-		this.P.run(idTower, () => this.S.Tower.attack(this.waveManager.ctx, effectiveDt));
-		this.P.run(idReconcile, () => this.S.Enemy.reconcilePredicted(this.world, this.C));
-
-		this.onTickComplete.Fire(dt);
+		if (this.S.Wave.mission) {
+			this.P.run(this.S.Wave.spawnerId, () => this.S.Wave.tick(effectiveDt));
+		}
+		if (this.S.Wave.activeWave > 0) {
+			this.P.run(this.S.Enemy.moveId, () => this.S.Enemy.tick(effectiveDt));
+		}
 	}
 }

@@ -1,10 +1,14 @@
+// Services
+import { RunService } from "@rbxts/services";
+
 // Packages
 import { SyncPayload } from "@rbxts/charm-sync";
-import Object from "@rbxts/object-utils";
 import { NetworkData } from "@shared/network";
+import { useAtom } from "@rbxts/vide-charm";
+import Object from "@rbxts/object-utils";
 
 // Components
-import states from "@shared/states";
+import states from "./states";
 
 export default class PlayerData {
 	private state = states.players;
@@ -31,8 +35,19 @@ export default class PlayerData {
 		};
 	}
 
-	public get(id: string) {
+	public getState(id: string) {
 		return this.state().get(id);
+	}
+
+	public getProps(player: Player) {
+		if (RunService.IsServer() && RunService.IsRunning()) {
+			return warn("[PlayerData] getProps should only be called on the client");
+		}
+
+		return {
+			gems: useAtom(() => this.state().get(tostring(player.UserId))?.gems ?? 0),
+			gold: useAtom(() => this.state().get(tostring(player.UserId))?.gold ?? 0),
+		};
 	}
 
 	public set(id: string, newData: NetworkData.State.PlayerData.Default) {
@@ -47,6 +62,8 @@ export default class PlayerData {
 		id: string,
 		updater: (data: NetworkData.State.PlayerData.Default) => NetworkData.State.PlayerData.Default,
 	) {
+		if (RunService.IsClient()) return warn("[PlayerData] update should only be called on the server");
+
 		this.state((state) => {
 			const newState = Object.deepCopy(state);
 
@@ -61,6 +78,8 @@ export default class PlayerData {
 	}
 
 	public delete(id: string) {
+		if (RunService.IsClient()) return warn("[PlayerData] delete should only be called on the server");
+
 		this.state((state) => {
 			const newState = Object.deepCopy(state);
 			newState.delete(id);

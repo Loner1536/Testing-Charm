@@ -1,3 +1,6 @@
+// Services
+import { RunService } from "@rbxts/services";
+
 // Packages
 import Replecs from "@rbxts/replecs";
 
@@ -9,7 +12,7 @@ let replicator: ReturnType<typeof Replecs.create> | undefined;
 
 export default function getReplicator() {
 	if (!replicator) {
-		const sim = getSim(); // <-- server should own this
+		const sim = getSim();
 		replicator = Replecs.create(sim.world);
 	}
 	return replicator;

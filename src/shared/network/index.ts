@@ -1,10 +1,10 @@
 // Packages
 import type { SerializeablePayload } from "@rbxts/charm-payload-converter";
 import { MessageEmitter } from "@rbxts/tether";
-import { u8, Tuple } from "@rbxts/serio";
+import { u8, u16, Tuple, type Serializer } from "@rbxts/serio";
 
 // Components
-import states from "@shared/states";
+import states from "@shared/stateManager/states";
 
 export namespace NetworkData {
 	export namespace State {
@@ -16,21 +16,21 @@ export namespace NetworkData {
 		}
 		export namespace WaveData {
 			export type Default = {
-				mapId: string;
-				type: "story" | "raid";
+				id: string;
+				type: "story";
 				hpStocks: u8;
 				vote: boolean;
+				enemies: u16;
+				speed: u8;
 				votes: u8;
 				wave: u8;
 				act: u8;
-
-				enemies: Map<string, { pathIndex: number; hp: u8; speed: u8 }>;
 			};
 		}
 	}
 
 	export namespace Jecs {
-		export type ReplecsData = Tuple<[buffer, unknown[][]]> | undefined;
+		export type ReplecsData = Serializer<Tuple<[buffer, unknown[][]]>> | undefined;
 	}
 }
 
@@ -40,13 +40,15 @@ export const keys = {
 		init: 1,
 	},
 	wave: {
-		vote: 2,
+		vote: 50,
+		gameSpeed: 51,
 	},
 	jecs: {
-		receiveFull: 3,
-		receiveFullReturn: 4,
+		receiveFull: 100,
+		receiveFullReturn: 101,
 
-		sendUpdates: 5,
+		sendUpdates: 102,
+		sendUpdatesFullReturn: 103,
 	},
 } as const;
 
@@ -54,40 +56,19 @@ type MessengerPayloads = {
 	[keys.state.sync]: SerializeablePayload<typeof states>;
 	[keys.state.init]: void;
 	[keys.wave.vote]: void;
+	[keys.wave.gameSpeed]: number;
 	[keys.jecs.receiveFull]: void;
 	[keys.jecs.receiveFullReturn]: NetworkData.Jecs.ReplecsData;
 	[keys.jecs.sendUpdates]: NetworkData.Jecs.ReplecsData;
+	[keys.jecs.sendUpdatesFullReturn]: NetworkData.Jecs.ReplecsData;
 };
 
 function createMessenger() {
 	const Messenger = MessageEmitter.create<MessengerPayloads>();
 
 	return {
-		middleware: Messenger.middleware,
+		...Messenger,
 		keys,
-		client: {
-			fire<K extends keyof MessengerPayloads>(player: Player, key: K, payload?: MessengerPayloads[K]) {
-				Messenger.client.emit(player, key, payload);
-			},
-			on<K extends keyof MessengerPayloads>(key: K, callback: (payload: MessengerPayloads[K]) => void) {
-				Messenger.client.on(key, callback);
-			},
-			setCallback: Messenger.client.setCallback,
-			invoke: Messenger.client.invoke,
-		},
-		server: {
-			fire<K extends keyof MessengerPayloads>(key: K, payload?: MessengerPayloads[K]) {
-				Messenger.server.emit(key, payload);
-			},
-			on<K extends keyof MessengerPayloads>(
-				key: K,
-				callback: (player: Player, payload: MessengerPayloads[K]) => void,
-			) {
-				Messenger.server.on(key, callback);
-			},
-			setCallback: Messenger.server.setCallback,
-			invoke: Messenger.server.invoke,
-		},
 	};
 }
 

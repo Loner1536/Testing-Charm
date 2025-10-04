@@ -1,12 +1,12 @@
 // Packages
-import { World, Name } from "@rbxts/jecs";
 import { Shared } from "@rbxts/replecs";
+import { Name } from "@rbxts/jecs";
 
 // Types
 import * as Types from "@shared/types";
 
 export default class Components {
-	constructor(private world: World) {}
+	constructor(private sim: Types.Core.API) {}
 
 	// --- Tags ---
 	public Tags = {
@@ -19,16 +19,15 @@ export default class Components {
 		Dead: this.defineTag("Dead"),
 	} as const;
 
-	public Grid = {
-		PathProgress: this.defineComponent<{ node: number; progress: number }>("PathProgress"),
-		SpawnMeta: this.defineComponent<{ time: number; order: number }>("SpawnMeta"),
-		Orientation: this.defineComponent<number>("Orientation"),
-		SpawnPoint: this.defineComponent<Vector2>("SpawnPoint"),
-		PathIndex: this.defineComponent<number>("PathIndex"),
+	public Vectors = {
+		Orientation: this.defineComponent<Vector3>("Orientation"),
 		MoveDir: this.defineComponent<Vector2>("MoveDir"),
-		World: this.defineComponent<Vector2>("WorldPos"),
+		World: this.defineComponent<Vector3>("WorldPos"),
 		Grid: this.defineComponent<Vector2>("GridPos"),
-		Height: this.defineComponent<number>("Height"),
+	} as const;
+
+	public Debug = {
+		Visual: this.defineComponent<BasePart>("DebugVisual"),
 	} as const;
 
 	public Enemy = {
@@ -47,12 +46,15 @@ export default class Components {
 		Shield: this.defineComponent<number>("Shield"),
 
 		Bounty: this.defineComponent<number>("Bounty"),
+
+		PathProgress: this.defineComponent<{ node: number; progress: number }>("PathProgress"),
+		PathIndex: this.defineComponent<number>("PathIndex"),
 	} as const;
 
 	public Stats = {
 		LeakDamage: this.defineComponent<number>("LeakDamage"),
 	};
-
+	
 	public Tower = {
 		Id: this.defineComponent<string>("TowerId"),
 
@@ -73,16 +75,16 @@ export default class Components {
 
 	// --- Helpers ---
 	private defineComponent<T>(name: string) {
-		const comp = this.world.component<T>();
-		this.world.set(comp, Name, name);
-		this.world.add(comp, Shared);
+		const comp = this.sim.world.component<T>();
+		this.sim.world.set(comp, Name, name);
+		this.sim.world.add(comp, Shared);
 		return comp;
 	}
 
 	private defineTag(name: string) {
-		const tag = this.world.entity();
-		this.world.set(tag, Name, name);
-		this.world.add(tag, Shared);
+		const tag = this.sim.world.entity();
+		this.sim.world.set(tag, Name, name);
+		this.sim.world.add(tag, Shared);
 		return tag;
 	}
 }

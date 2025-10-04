@@ -1,35 +1,15 @@
+// Maps
+import SandVillage from "./Sand Village";
+
 // Configuration
 const mapConfiguration = {
 	story: {
-		test: {
-			acts: [
-				{
-					waves: {
-						1: { enemies: [{ model: undefined }] },
-						2: { enemies: [{ model: undefined }] },
-					},
-				},
-			],
-		},
-	},
-	raid: {
-		dungeon: {
-			acts: [
-				{
-					waves: {
-						1: { enemies: [{ model: undefined }] },
-						2: { enemies: [{ model: undefined }] },
-					},
-				},
-			],
-		},
+		SandVillage,
 	},
 } as const;
 
-const TypeConfiguration = {
+export const typeConfiguration = {
 	story: { maxStocks: 3 },
-	raid: { maxStocks: 5 },
 } as const;
 
-export { TypeConfiguration };
 export default mapConfiguration;

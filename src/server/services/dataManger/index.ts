@@ -7,14 +7,12 @@ import { Service, OnInit } from "@flamework/core";
 import { NetworkData } from "@shared/network";
 
 // Utility
-import { safePlayerAdded } from "shared/utility/safePlayerAdded";
+import safePlayerAdded from "shared/utility/safePlayerAdded";
 
 // Components
 import template from "./template";
+import getSim from "@shared/ecs";
 import schema from "./schema";
-
-// Dependencies
-import StateManager from "../stateManager";
 
 @Service()
 export default class DataManager implements OnInit {
@@ -26,7 +24,7 @@ export default class DataManager implements OnInit {
 		memoryStoreService: new MockMemoryStoreService(),
 		changedCallbacks: [
 			(userId, newData, _oldData) => {
-				this.stateManager.playerData.update(tostring(userId), (data) => ({
+				this.sim.StateManager.playerData.update(tostring(userId), (data) => ({
 					...data,
 					...newData,
 				}));
@@ -57,17 +55,17 @@ export default class DataManager implements OnInit {
 		// importLegacyData: (key: string) => { /* ... */ },
 	});
 
-	constructor(private stateManager: StateManager) {}
+	private sim = getSim();
 
 	onInit(): void {
 		safePlayerAdded(async (player) => {
 			try {
 				await this.store.loadAsync(player);
 
-				this.stateManager.playerData.set(tostring(player.UserId), await this.store.get(player));
+				this.sim.StateManager.playerData.set(tostring(player.UserId), await this.store.get(player));
 
 				Promise.fromEvent(Players.PlayerRemoving, (left) => player === left)
-					.then(() => this.stateManager.playerData.delete(tostring(player.UserId)))
+					.then(() => this.sim.StateManager.playerData.delete(tostring(player.UserId)))
 					.then(() => this.store.unloadAsync(player));
 			} catch (error) {
 				this.handlePlayerDataError(player, error);

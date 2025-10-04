@@ -3,7 +3,7 @@ import { Players, StarterGui, Workspace } from "@rbxts/services";
 
 // Packages
 import { Controller, OnStart } from "@flamework/core";
-import Vide, { source } from "@rbxts/vide";
+import Vide, { mount, source } from "@rbxts/vide";
 import Network from "@shared/network";
 import Forge from "@rbxts/forge";
 
@@ -20,15 +20,13 @@ import ForgeApp from "./app";
 const player = Players.LocalPlayer;
 
 // Dependencies
-import StateManager from "../stateManager";
-
-const { mount } = Vide;
+import JecsManager from "../jecsManager";
 
 @Controller({
 	loadOrder: 1,
 })
 export default class InterfaceManager implements OnStart {
-	constructor(private stateManager: StateManager) {}
+	constructor(private jecsManager: JecsManager) {}
 
 	onStart() {
 		const lobby = (
@@ -41,6 +39,7 @@ export default class InterfaceManager implements OnStart {
 			Forge.render(lobby);
 
 			const props = this.buildProps(player);
+			if (!props) return error("couldn't build interface props");
 
 			// On spawn animation
 			task.delay(1, () => {
@@ -54,11 +53,25 @@ export default class InterfaceManager implements OnStart {
 	}
 
 	public buildProps(player: Player) {
-		return {
-			playerData: this.stateManager.playerData.get(player),
-			waveData: this.stateManager.waveData.get(),
+		const playerData = this.jecsManager.sim.StateManager.playerData.getProps(player);
+		if (!playerData) return warn("couldn't get player data for interface manager");
 
-			network: Network,
+		const waveData = this.jecsManager.sim.StateManager.waveData.getProps();
+		if (!waveData) return warn("couldn't get wave data for interface manager");
+
+		return {
+			playerData: playerData,
+			waveData: waveData,
+
+			network: {
+				wave: {
+					vote: {
+						emit: () => {
+							Network.server.emit(Network.keys.wave.vote);
+						},
+					},
+				},
+			},
 
 			topMenu: {
 				visible: source(false),

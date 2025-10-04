@@ -31,7 +31,6 @@ export default class JabbyProfiler {
 			configuration: { scheduler: this.scheduler! },
 		});
 
-		// Initial broadcast so connected clients pick up new applets (server-only API)
 		if (RunService.IsServer()) {
 			broadcast_server?.();
 		}

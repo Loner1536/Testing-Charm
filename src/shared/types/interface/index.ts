@@ -1,5 +1,5 @@
 // Packages
-import Network, { NetworkData } from "@shared/network";
+import { NetworkData } from "@shared/network";
 import { Source } from "@rbxts/vide";
 
 type Sourceify<T> = {
@@ -17,7 +17,13 @@ type InterfaceProps = {
 	playerData: PlayerData;
 	waveData: WaveData;
 
-	network: typeof Network;
+	network: {
+		wave: {
+			vote: {
+				emit: () => void;
+			};
+		};
+	};
 
 	topMenu: TopMenu;
 };

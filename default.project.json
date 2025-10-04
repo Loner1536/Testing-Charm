@@ -44,6 +44,9 @@
 			},
 			"Enemies": {
 				"$className": "Folder"
+			},
+			"Debug": {
+				"$className": "Folder"
 			}
 		},
 		"HttpService": {
